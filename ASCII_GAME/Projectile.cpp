@@ -9,8 +9,14 @@ Projectile::Projectile(ProjectileType type, Vector2 &pos) :
 
 	switch (type)
 	{
-	case PROJECTILE_A: SetImage("projectile1.tga"); break;
-	case PROJECTILE_B: SetImage("projectile2.tga"); break;
+	case PROJECTILE_PLAYER:
+		SetImage("projectile1.tga");
+		m_ProjectileSpeed = 15;
+		break;
+	case PROJECTILE_ENEMY:
+		SetImage("projectile2.tga");
+		m_ProjectileSpeed = -13;
+		break;
 	}
 }
 
@@ -21,8 +27,5 @@ Projectile::~Projectile()
 
 void Projectile::Update()
 {
-	if (m_bIsFiring)
-	{
-		m_Position.x += m_ProjectileSpeed;
-	}
+	m_Position.x += m_ProjectileSpeed;
 }

@@ -4,8 +4,8 @@
 
 enum ProjectileType
 {
-	PROJECTILE_A,
-	PROJECTILE_B
+	PROJECTILE_PLAYER,
+	PROJECTILE_ENEMY
 };
 
 class Projectile : public Sprite
@@ -16,6 +16,7 @@ public:
 
 	void Update();
 	void SetFiringState(bool state) { m_bIsFiring = state; }
+	void SetSpeed(char speed) { m_ProjectileSpeed = speed; }
 
 	bool IsFiring() const { return m_bIsFiring; }
 
@@ -23,6 +24,6 @@ public:
 
 private:
 	unsigned char m_Damage;
-	unsigned char m_ProjectileSpeed;
+	char m_ProjectileSpeed;
 	bool m_bIsFiring;
 };
