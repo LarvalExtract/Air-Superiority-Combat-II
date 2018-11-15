@@ -4,8 +4,9 @@
 #include "GameStates.h"
 #include "../Player.h"
 #include "../Enemy.h"
-#include "../ProjectileManager.h"
+#include "../Projectile.h"
 #include <vector>
+#include <list>
 
 class ASCIIRenderer;
 
@@ -26,11 +27,19 @@ private:
 	void Render();
 
 	void ProcessInputs();
+	void UpdatePlayerProjectiles();
+	void UpdateEnemyProjectiles();
+
+	void RenderProjectiles();
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
 
-	ProjectileManager m_ScreenProjectiles;
+	std::vector<Projectile> playerProjectiles;
+	std::vector<Projectile> enemyProjectiles;
+
+	Projectile& GetPlayerProjectile();
+	Projectile& GetEnemyProjectile();
 
 	Player player;
 	std::vector<Enemy*> pEnemies;

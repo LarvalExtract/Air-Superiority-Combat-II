@@ -1,12 +1,10 @@
 #include "Projectile.h"
 
-Projectile::Projectile(ProjectileType type, Vector2 &pos) :
+Projectile::Projectile(ProjectileType type) :
 	m_Damage(1),
 	m_ProjectileSpeed(15),
 	m_bIsFiring(false)
 {
-	m_Position = pos;
-
 	switch (type)
 	{
 	case PROJECTILE_PLAYER:

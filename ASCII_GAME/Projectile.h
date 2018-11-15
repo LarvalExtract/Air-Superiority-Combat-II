@@ -11,7 +11,7 @@ enum ProjectileType
 class Projectile : public Sprite
 {
 public:
-	Projectile(ProjectileType type, Vector2 &pos);
+	Projectile(ProjectileType type);
 	~Projectile();
 
 	void Update();

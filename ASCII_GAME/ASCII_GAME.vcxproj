@@ -77,7 +77,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="ProjectileManager.cpp" />
     <ClCompile Include="TGAFile.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -94,7 +93,6 @@
     <ClInclude Include="Game\GameStates.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
-    <ClInclude Include="ProjectileManager.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

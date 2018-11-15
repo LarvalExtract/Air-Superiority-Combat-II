@@ -5,7 +5,9 @@ Player::Player() :
 	Sprite("player.tga"),
 	m_Lives(3),
 	m_MovementSpeed(5),
-	m_ShootWaitTime(0.35)
+	m_ShootWaitTime(0.35),
+	m_Score(0),
+	m_Damage(2)
 {
 
 }

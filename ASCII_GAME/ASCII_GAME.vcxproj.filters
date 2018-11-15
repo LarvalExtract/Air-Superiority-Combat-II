@@ -32,9 +32,6 @@
     <ClCompile Include="Projectile.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectileManager.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -95,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="TGAFile.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectileManager.h">
-      <Filter>Game\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Core</Filter>
