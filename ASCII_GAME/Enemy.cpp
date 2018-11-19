@@ -1,23 +1,11 @@
 #include "Enemy.h"
 
 Enemy::Enemy(EnemyType type) :
-	m_Health(0),
-	m_Speed(0),
-	m_bDestroyed(false)
-{
-	Initialise(type);
-}
-
-Enemy::~Enemy()
-{
-
-}
-
-bool Enemy::Initialise(EnemyType type)
+	type(type)
 {
 	switch (type)
 	{
-	case ENEMY_LIGHT: 
+	case ENEMY_LIGHT:
 		SetImage("enemy1.tga");
 		m_Health = 1;
 		m_Speed = 9;
@@ -52,19 +40,32 @@ bool Enemy::Initialise(EnemyType type)
 		m_Points = 300;
 		break;
 	}
-
-	return true;
 }
 
-void Enemy::MoveLeft()
+Enemy::~Enemy()
 {
+
+}
+
+void Enemy::Update()
+{
+	switch (type)
+	{
+	case ENEMY_LIGHT:
+		break;
+
+	case ENEMY_BIPLANE:
+		break;
+
+	case ENEMY_MEDIUM:
+		break;
+
+	case ENEMY_HEAVY:
+		break;
+
+	case ENEMY_GUNSHIP:
+		break;
+	}
+
 	m_Position.x -= m_Speed;
-}
-
-void Enemy::ApplyDamage(unsigned char damage)
-{
-	m_Health -= damage;
-
-	if (m_Health <= 0)
-		m_bDestroyed = true;
 }

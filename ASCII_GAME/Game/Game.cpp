@@ -4,7 +4,7 @@
 #include "../Core/Utils.h"
 #include "../Core/Renderer/ASCIIRenderer.h"
 
-const int SCREEN_WIDTH = 600;
+const int SCREEN_WIDTH = 700;
 const int SCREEN_HEIGHT = 200;
 
 const int SCREEN_BOUNDARY_TOP = 40;
@@ -92,7 +92,9 @@ void Game::Update()
 	UpdateEnemyProjectiles();
 
 	for (int i = 0; i < pEnemies.size(); i++)
-		pEnemies[i]->MoveLeft();
+		pEnemies[i]->Update();
+
+	//pEnemies[3]->SetPosition(pEnemies[3]->GetPosition().x, (sinf(gameTimer.Elapsed()) * 20.0f) + (SCREEN_HEIGHT / 2));
 }
 
 void Game::Render()
@@ -148,22 +150,30 @@ void Game::ProcessInputs()
 
 void Game::UpdatePlayerProjectiles()
 {
-	for (int i = 0; i < playerProjectiles.size(); i++)
+	for (Projectile& projectile : playerProjectiles)
 	{
-		if (playerProjectiles[i].IsFiring())
+		if (projectile.IsFiring())
 		{
-			playerProjectiles[i].Update();
+			projectile.Update();
 
+			// Disable projectile if it's left the screen, and skip to the next projectile
+			if (projectile.GetPosition().x > SCREEN_WIDTH)
+			{
+				projectile.SetFiringState(false);
+				continue;
+			}
+
+			// Check if the projectile has hit any of the enemies on screen
 			for (int j = 0; j < pEnemies.size(); j++)
 			{
-				if (playerProjectiles[i].Collides(*pEnemies[j]))
+				if (projectile.Collides(*pEnemies[j]))
 				{
-					pEnemies[j]->ApplyDamage(player.GetDamage());
+					pEnemies[j]->ApplyDamage(projectile.GetDamage());
 
 					if (pEnemies[j]->IsDestroyed())
 						player.AddScore(pEnemies[j]->GetPoints());
 
-					playerProjectiles[i].SetFiringState(false);
+					projectile.SetFiringState(false);
 				}
 			}
 		}
@@ -172,17 +182,23 @@ void Game::UpdatePlayerProjectiles()
 
 void Game::UpdateEnemyProjectiles()
 {
-	for (int i = 0; i < enemyProjectiles.size(); i++)
+	for (Projectile& projectile : enemyProjectiles)
 	{
-		if (enemyProjectiles[i].IsFiring())
+		if (projectile.IsFiring())
 		{
-			enemyProjectiles[i].Update();
+			projectile.Update();
 
-			if (enemyProjectiles[i].Collides(player))
+			if (projectile.GetPosition().x + projectile.GetSize().x < 0)
+			{
+				projectile.SetFiringState(false);
+				continue;
+			}
+
+			if (projectile.Collides(player))
 			{
 				player.DecrementLives();
 
-				enemyProjectiles[i].SetFiringState(false);
+				projectile.SetFiringState(false);
 			}
 		}
 	}
@@ -199,9 +215,24 @@ void Game::RenderProjectiles()
 			enemyProjectiles[i].Render(m_pRenderer);
 }
 
+Projectile& Game::GetProjectile(std::vector<Projectile>& array, ProjectileType type)
+{
+	// Return the first inactive projectile in the vector
+	for (Projectile& projectile : array)
+		if (!projectile.IsFiring())
+			return projectile;
+
+	// All projectiles are active, push back and return a new projectile
+	array.emplace_back(type);
+	return array.back();
+}
+
 Projectile& Game::GetPlayerProjectile()
 {
-	for (int i = 0; i < playerProjectiles.size(); i++)
-		if (!playerProjectiles[i].IsFiring())
-			return playerProjectiles[i];
+	return GetProjectile(playerProjectiles, PROJECTILE_PLAYER);
+}
+
+Projectile& Game::GetEnemyProjectile()
+{
+	return GetProjectile(enemyProjectiles, PROJECTILE_ENEMY);
 }

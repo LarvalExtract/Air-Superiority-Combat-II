@@ -3,14 +3,18 @@
 #include <chrono>
 
 // Timer used to measure elapsed time
+template<class T>
 class Timer
 {
+	using clock = std::chrono::high_resolution_clock;
+	using interval = std::chrono::duration<T, std::ratio<1>>;
+
 public:
-	Timer();
+	Timer() : start(std::chrono::high_resolution_clock::now()) {};
 
-	void Reset();
-	double Elapsed() const;
+	void Reset() { start = clock::now(); }
+	T Elapsed() const { return std::chrono::duration_cast<interval>(clock::now() - start).count(); };
+
 private:
-	std::chrono::time_point<std::chrono::high_resolution_clock> start;
-
+	std::chrono::time_point<clock> start;
 };

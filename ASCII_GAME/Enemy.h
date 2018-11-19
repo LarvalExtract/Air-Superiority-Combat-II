@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Renderer/Sprite.h"
+#include "Plane.h"
 
 enum EnemyType
 {
@@ -11,24 +11,19 @@ enum EnemyType
 	ENEMY_GUNSHIP
 };
 
-class Enemy : public Sprite
+class Enemy : public Plane
 {
 public:
 	Enemy(EnemyType type = ENEMY_HEAVY);
 	~Enemy();
 
-	char GetHealth() const { return m_Health; }
-	unsigned int GetPoints() const { return m_Points; }
-	bool IsDestroyed() const { return m_bDestroyed;  }
+	void Update();
 
-	void MoveLeft();
-	void ApplyDamage(unsigned char damage);
+	unsigned int GetPoints() const { return m_Points; }
 
 private:
-	char m_Health;
-	unsigned char m_Speed;
-	bool m_bDestroyed;
-	unsigned int m_Points;
 
-	bool Initialise(EnemyType type);
+
+	unsigned int m_Points;
+	EnemyType type;
 };

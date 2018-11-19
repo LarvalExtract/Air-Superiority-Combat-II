@@ -1,7 +1,7 @@
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
-#include "../Maths/Vector2.h"
+#include "../../Vec2.h"
 #include "ConsoleColours.h"
 
 #include <Windows.h>
@@ -33,21 +33,24 @@ public:
 	void Render(ASCIIRenderer* pRenderer);
 
 	void SetPosition(int x, int y) { m_Position.x = x; m_Position.y = y; }
-	void SetPosition(Vector2& position) { m_Position = position; }
+	void SetPosition(Vec2<float>& position) { m_Position = position; }
+	void SetPixelOverrideColour(ConsoleColour colour) { m_PixelOverride.Attributes = colour; }
+	void ClearPixelOverrideColour() { m_PixelOverride.Attributes = 0; }
 
-	Vector2 GetPosition(){ return m_Position; }
-	Vector2 GetSize(){ return m_Size; }
+	Vec2<float> GetPosition(){ return m_Position; }
+	Vec2<int> GetSize(){ return m_Size; }
 
 	bool Collides(Sprite& otherSprite);
 
 protected:
-	Vector2 m_Position;
-	Vector2 m_Size;
+	Vec2<float> m_Position;
+	Vec2<int> m_Size;
 
-private:
+protected:
 	bool m_bInitialised;
 
 	CONSOLE_PIXEL* m_PixelData;
+	CHAR_INFO m_PixelOverride;
 };
 
 #endif

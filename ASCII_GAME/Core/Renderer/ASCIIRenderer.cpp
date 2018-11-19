@@ -60,7 +60,7 @@ void ASCIIRenderer::SetWindow(int Width, int Height)
 	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
 	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);
 
-	LPCTSTR windowTitle = L"4107COMP Assignment 1";
+	LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
 	SetConsoleTitle(windowTitle);
 }
 

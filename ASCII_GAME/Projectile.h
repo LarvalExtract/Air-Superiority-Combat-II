@@ -16,14 +16,14 @@ public:
 
 	void Update();
 	void SetFiringState(bool state) { m_bIsFiring = state; }
-	void SetSpeed(char speed) { m_ProjectileSpeed = speed; }
+	void SetSpeed(float speed) { m_ProjectileSpeed = speed; }
 
 	bool IsFiring() const { return m_bIsFiring; }
 
-	unsigned char GetDamage() const { return m_Damage; }
+	float GetDamage() const { return m_Damage; }
 
 private:
-	unsigned char m_Damage;
-	char m_ProjectileSpeed;
+	float m_Damage;
+	float m_ProjectileSpeed;
 	bool m_bIsFiring;
 };

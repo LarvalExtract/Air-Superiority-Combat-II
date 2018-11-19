@@ -11,7 +11,7 @@
 //#define BACKGROUND_RED       0x0040 // background color contains red.
 //#define BACKGROUND_INTENSITY 0x0080 // background color is intensified.
 
-enum class ConsoleColour : unsigned short
+enum ConsoleColour : unsigned short
 {
 	Black = 0,
 
@@ -50,5 +50,5 @@ enum class ConsoleColour : unsigned short
 
 inline ConsoleColour operator|(ConsoleColour lhs, const ConsoleColour& rhs)
 {
-	return ConsoleColour(static_cast<unsigned short>(lhs) | static_cast<unsigned short>(rhs));
+	return lhs | rhs;
 }

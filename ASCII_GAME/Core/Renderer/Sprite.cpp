@@ -17,11 +17,15 @@ CONSOLE_PIXEL SamplePixel(unsigned int pixel);
 
 Sprite::Sprite() :
 	m_PixelData(nullptr),
-	m_bInitialised(false)
+	m_bInitialised(false),
+	m_PixelOverride({ 0, 0 })
 {
 }
 
-Sprite::Sprite(const char* bmpFile)
+Sprite::Sprite(const char* bmpFile) :
+	m_PixelData(nullptr),
+	m_bInitialised(false),
+	m_PixelOverride({ 0, 0 })
 {
 	SetImage(bmpFile);
 }
@@ -180,7 +184,12 @@ void Sprite::Render(ASCIIRenderer* pRenderer)
 				int index = x + (y * m_Size.x);
 
 				if (!m_PixelData[index].transparent)
-					pRenderer->SetPixel(m_Position.x + x, m_Position.y + y, m_PixelData[index].charInfo);
+				{
+					if (m_PixelOverride.Attributes != 0)
+						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelOverride);
+					else
+						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelData[index].charInfo);
+				}
 			}
 		}
 	}

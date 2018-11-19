@@ -6,7 +6,6 @@
 #include "../Enemy.h"
 #include "../Projectile.h"
 #include <vector>
-#include <list>
 
 class ASCIIRenderer;
 
@@ -40,6 +39,7 @@ private:
 
 	Projectile& GetPlayerProjectile();
 	Projectile& GetEnemyProjectile();
+	Projectile& GetProjectile(std::vector<Projectile>& array, ProjectileType type);
 
 	Player player;
 	std::vector<Enemy*> pEnemies;
@@ -48,6 +48,8 @@ private:
 	bool m_bExitApp;
 
 	int m_Checkpoint;
+
+	Timer<float> gameTimer;
 };
 
 

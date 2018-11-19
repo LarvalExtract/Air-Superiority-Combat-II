@@ -32,8 +32,8 @@
     <ClCompile Include="Projectile.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Core</Filter>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Game\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Core\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Game\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
