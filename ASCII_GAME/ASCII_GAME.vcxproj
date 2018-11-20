@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Background.cpp" />
     <ClCompile Include="Core\Maths\Vector2.cpp" />
     <ClCompile Include="Core\Maths\Vector3.cpp" />
     <ClCompile Include="Core\Renderer\ASCIIRenderer.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="TGAFile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Background.h" />
     <ClInclude Include="Core\Maths\Vector2.h" />
     <ClInclude Include="Core\Maths\Vector3.h" />
     <ClInclude Include="Core\Renderer\ASCIIRenderer.h" />

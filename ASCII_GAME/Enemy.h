@@ -17,13 +17,13 @@ public:
 	Enemy(EnemyType type = ENEMY_HEAVY);
 	~Enemy();
 
-	void Update();
+	void Update(float deltaTime);
+
+	void UpdateBiplane(float deltaTime);
 
 	unsigned int GetPoints() const { return m_Points; }
 
 private:
-
-
 	unsigned int m_Points;
 	EnemyType type;
 };

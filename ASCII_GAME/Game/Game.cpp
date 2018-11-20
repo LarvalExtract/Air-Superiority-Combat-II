@@ -23,7 +23,8 @@ Game::Game() :
 	m_pRenderer(NULL),
 	m_bInitialised(false),
 	m_bExitApp(false),
-	m_Checkpoint(0)
+	m_Checkpoint(0),
+	clouds(SCREEN_WIDTH, SCREEN_HEIGHT)
 {
 	playerProjectiles.reserve(MAX_PLAYER_PROJECTILES);
 	enemyProjectiles.reserve(MAX_ENEMY_PROJECTILES);
@@ -74,13 +75,18 @@ void Game::InitialiseRenderer()
 
 void Game::Run()
 {
+	float lastTime = 0.0f;
+	float newTime = gameTimer.Elapsed();
+
 	while (!m_bExitApp)
 	{
+		lastTime = newTime;
+		newTime = gameTimer.Elapsed();
+		m_deltaTime = newTime - lastTime;
+
 		Update();
 
 		Render();
-
-		//Sleep(5);
 	}
 }
 
@@ -92,15 +98,17 @@ void Game::Update()
 	UpdateEnemyProjectiles();
 
 	for (int i = 0; i < pEnemies.size(); i++)
-		pEnemies[i]->Update();
+		pEnemies[i]->Update(m_deltaTime);
 
-	//pEnemies[3]->SetPosition(pEnemies[3]->GetPosition().x, (sinf(gameTimer.Elapsed()) * 20.0f) + (SCREEN_HEIGHT / 2));
+	clouds.Update(m_deltaTime);
 }
 
 void Game::Render()
 {
 	//call this first
-	m_pRenderer->ClearScreen();	
+	m_pRenderer->ClearScreen(ConsoleColour::BackgroundBlue);	
+
+	clouds.Render(m_pRenderer);
 
 	//render your game here
 	player.Render(m_pRenderer);
@@ -125,22 +133,22 @@ void Game::ProcessInputs()
 	// Move player up
 	if (GetKeyState(VK_UP) < 0)
 		if (player.GetPosition().y > SCREEN_BOUNDARY_TOP)
-			player.MoveUp();
+			player.MoveUp(m_deltaTime);
 
 	// Move player down
 	if (GetKeyState(VK_DOWN) < 0)
 		if (player.GetPosition().y + player.GetSize().y < SCREEN_BOUNDARY_BOTTOM)
-			player.MoveDown();
+			player.MoveDown(m_deltaTime);
 	
 	// Move player right
 	if (GetKeyState(VK_RIGHT) < 0)
 		if (player.GetPosition().x < SCREEN_BOUNDARY_RIGHT)
-			player.MoveRight();
+			player.MoveRight(m_deltaTime);
 
 	// Move player right
 	if (GetKeyState(VK_LEFT) < 0)
 		if (player.GetPosition().x > SCREEN_BOUNDARY_LEFT)
-			player.MoveLeft();
+			player.MoveLeft(m_deltaTime);
 
 	// Shoot projectile
 	if (GetKeyState(VK_SPACE) < 0)
@@ -154,7 +162,7 @@ void Game::UpdatePlayerProjectiles()
 	{
 		if (projectile.IsFiring())
 		{
-			projectile.Update();
+			projectile.Update(m_deltaTime);
 
 			// Disable projectile if it's left the screen, and skip to the next projectile
 			if (projectile.GetPosition().x > SCREEN_WIDTH)
@@ -186,7 +194,7 @@ void Game::UpdateEnemyProjectiles()
 	{
 		if (projectile.IsFiring())
 		{
-			projectile.Update();
+			projectile.Update(m_deltaTime);
 
 			if (projectile.GetPosition().x + projectile.GetSize().x < 0)
 			{

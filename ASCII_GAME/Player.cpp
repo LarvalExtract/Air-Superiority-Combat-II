@@ -7,6 +7,6 @@ Player::Player() :
 {
 	SetImage("player.tga");
 	m_Health = 10.0f;
-	m_Speed = 5.0f;
+	m_Speed = 150.0f;
 	m_ShootCooldown = 0.3f;
 }

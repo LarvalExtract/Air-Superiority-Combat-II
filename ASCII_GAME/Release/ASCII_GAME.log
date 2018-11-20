@@ -1,0 +1,18 @@
+﻿  Game.cpp
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\core\renderer\sprite.h(35): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(41): warning C4018: '<': signed/unsigned mismatch
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(100): warning C4018: '<': signed/unsigned mismatch
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(116): warning C4018: '<': signed/unsigned mismatch
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(175): warning C4018: '<': signed/unsigned mismatch
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(217): warning C4018: '<': signed/unsigned mismatch
+d:\documents\ljmu\4107comp - programming for games\assignment\ascii game\ascii_game\game\game.cpp(221): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  1 of 478 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  ASCII_GAME.vcxproj -> D:\Documents\LJMU\4107COMP - Programming for Games\Assignment\ASCII Game\Release\ASCII_GAME.exe

@@ -16,10 +16,10 @@ public:
 	void IncrementLives() { m_Lives++; }
 	void DecrementLives() { m_Lives--; }
 
-	void MoveUp() { m_Position.y -= m_Speed; }
-	void MoveDown() { m_Position.y += m_Speed; }
-	void MoveRight() { m_Position.x += m_Speed; }
-	void MoveLeft() { m_Position.x -= m_Speed; }
+	void MoveUp(float deltaTime) { m_Position.y -= m_Speed * deltaTime; }
+	void MoveDown(float deltaTime) { m_Position.y += m_Speed * deltaTime; }
+	void MoveRight(float deltaTime) { m_Position.x += m_Speed * deltaTime; }
+	void MoveLeft(float deltaTime) { m_Position.x -= m_Speed * deltaTime; }
 
 	void AddScore(unsigned int score) { m_Score += score; }
 

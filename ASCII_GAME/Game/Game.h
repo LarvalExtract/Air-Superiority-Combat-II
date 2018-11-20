@@ -5,6 +5,7 @@
 #include "../Player.h"
 #include "../Enemy.h"
 #include "../Projectile.h"
+#include "../Background.h"
 #include <vector>
 
 class ASCIIRenderer;
@@ -33,6 +34,7 @@ private:
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
+	Background clouds;
 
 	std::vector<Projectile> playerProjectiles;
 	std::vector<Projectile> enemyProjectiles;
@@ -50,6 +52,7 @@ private:
 	int m_Checkpoint;
 
 	Timer<float> gameTimer;
+	float m_deltaTime;
 };
 
 

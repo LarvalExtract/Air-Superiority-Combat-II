@@ -35,6 +35,9 @@
     <ClCompile Include="Plane.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>Game\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -100,6 +103,9 @@
       <Filter>Core\Maths</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
+      <Filter>Game\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
       <Filter>Game\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@ public:
 	Projectile(ProjectileType type);
 	~Projectile();
 
-	void Update();
+	void Update(float deltaTime);
 	void SetFiringState(bool state) { m_bIsFiring = state; }
 	void SetSpeed(float speed) { m_ProjectileSpeed = speed; }
 
