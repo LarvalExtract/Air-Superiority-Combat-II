@@ -12,6 +12,7 @@ public:
 
 	void Initialise(int width, int height);
 	void InitialisePixelSize();
+	void SetPixelSize(unsigned char size);
 
 	void Render();
 

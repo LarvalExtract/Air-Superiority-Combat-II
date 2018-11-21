@@ -4,7 +4,7 @@
 #include "../Core/Utils.h"
 #include "../Core/Renderer/ASCIIRenderer.h"
 
-const int SCREEN_WIDTH = 700;
+const int SCREEN_WIDTH = 600;
 const int SCREEN_HEIGHT = 200;
 
 const int SCREEN_BOUNDARY_TOP = 40;
@@ -23,8 +23,8 @@ Game::Game() :
 	m_pRenderer(NULL),
 	m_bInitialised(false),
 	m_bExitApp(false),
-	m_Checkpoint(0),
-	clouds(SCREEN_WIDTH, SCREEN_HEIGHT)
+	clouds(SCREEN_WIDTH, SCREEN_HEIGHT),
+	state(E_GAME_STATE_MAIN_MENU)
 {
 	playerProjectiles.reserve(MAX_PLAYER_PROJECTILES);
 	enemyProjectiles.reserve(MAX_ENEMY_PROJECTILES);
@@ -48,6 +48,8 @@ Game::~Game()
 void Game::Initialise()
 {
 	InitialiseRenderer();
+	
+	mainMenu.Initialise(SCREEN_WIDTH);
 
 	pEnemies.push_back(new Enemy(ENEMY_LIGHT));
 	pEnemies.push_back(new Enemy(ENEMY_BIPLANE));
@@ -92,6 +94,17 @@ void Game::Run()
 
 void Game::Update()
 {
+	clouds.Update(m_deltaTime);
+
+	switch (state)
+	{
+	case E_GAME_STATE_MAIN_MENU:	mainMenu.Update(); break;
+	case E_GAME_STATE_IN_GAME:		UpdateGame(); break;
+	}
+}
+
+void Game::UpdateGame()
+{
 	ProcessInputs();
 
 	UpdatePlayerProjectiles();
@@ -99,17 +112,28 @@ void Game::Update()
 
 	for (int i = 0; i < pEnemies.size(); i++)
 		pEnemies[i]->Update(m_deltaTime);
-
-	clouds.Update(m_deltaTime);
 }
 
 void Game::Render()
 {
 	//call this first
-	m_pRenderer->ClearScreen(ConsoleColour::BackgroundBlue);	
+	m_pRenderer->ClearScreen(ConsoleColour::BackgroundCyan);
 
+	// Render background
 	clouds.Render(m_pRenderer);
 
+	switch (state)
+	{
+	case E_GAME_STATE_MAIN_MENU:	mainMenu.Render(m_pRenderer); break;
+	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
+	}
+
+	//call this last
+	m_pRenderer->Render();
+}
+
+void Game::RenderGame()
+{
 	//render your game here
 	player.Render(m_pRenderer);
 
@@ -117,9 +141,6 @@ void Game::Render()
 		pEnemies[i]->Render(m_pRenderer);
 
 	RenderProjectiles();
-
-	//call this last
-	m_pRenderer->Render();
 }
 
 void Game::ProcessInputs()
@@ -132,23 +153,18 @@ void Game::ProcessInputs()
 
 	// Move player up
 	if (GetKeyState(VK_UP) < 0)
-		if (player.GetPosition().y > SCREEN_BOUNDARY_TOP)
-			player.MoveUp(m_deltaTime);
+		player.MoveUp(m_deltaTime);
 
 	// Move player down
 	if (GetKeyState(VK_DOWN) < 0)
-		if (player.GetPosition().y + player.GetSize().y < SCREEN_BOUNDARY_BOTTOM)
-			player.MoveDown(m_deltaTime);
-	
-	// Move player right
-	if (GetKeyState(VK_RIGHT) < 0)
-		if (player.GetPosition().x < SCREEN_BOUNDARY_RIGHT)
-			player.MoveRight(m_deltaTime);
+		player.MoveDown(m_deltaTime);
 
-	// Move player right
-	if (GetKeyState(VK_LEFT) < 0)
-		if (player.GetPosition().x > SCREEN_BOUNDARY_LEFT)
-			player.MoveLeft(m_deltaTime);
+
+	// Prevent player from going above or below the screen
+	if (player.GetPosition().y < 0)
+		player.SetPosition(player.GetPosition().x, 0);
+	else if (player.GetPosition().y + player.GetSize().y > SCREEN_HEIGHT)
+		player.SetPosition(player.GetPosition().x, SCREEN_HEIGHT - player.GetSize().y);
 
 	// Shoot projectile
 	if (GetKeyState(VK_SPACE) < 0)

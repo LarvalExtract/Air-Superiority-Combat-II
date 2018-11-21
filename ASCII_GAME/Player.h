@@ -8,6 +8,8 @@ public:
 	Player();
 	~Player() {}
 
+	void Update(float deltaTime);
+
 	unsigned char GetLives() const { return m_Lives; }
 	unsigned int GetScore() const { return m_Score; }
 

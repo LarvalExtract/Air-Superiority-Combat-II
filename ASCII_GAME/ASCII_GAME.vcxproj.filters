@@ -38,6 +38,9 @@
     <ClCompile Include="Background.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="Background.h">
       <Filter>Game\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

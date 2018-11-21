@@ -6,6 +6,7 @@
 #include "../Enemy.h"
 #include "../Projectile.h"
 #include "../Background.h"
+#include "../MainMenu.h"
 #include <vector>
 
 class ASCIIRenderer;
@@ -25,6 +26,10 @@ private:
 	void InitialiseRenderer();
 	void Update();
 	void Render();
+
+	void UpdateGame();
+
+	void RenderGame();
 
 	void ProcessInputs();
 	void UpdatePlayerProjectiles();
@@ -49,10 +54,12 @@ private:
 	bool m_bInitialised;
 	bool m_bExitApp;
 
-	int m_Checkpoint;
-
 	Timer<float> gameTimer;
 	float m_deltaTime;
+
+	E_GAME_STATE state;
+
+	MainMenu mainMenu;
 };
 
 

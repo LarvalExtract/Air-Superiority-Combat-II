@@ -76,6 +76,7 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\GameObjects\ScoreDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Plane.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameObjects\ScoreDisplay.h" />
     <ClInclude Include="Game\GameStates.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />

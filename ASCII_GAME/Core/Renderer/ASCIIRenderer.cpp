@@ -38,10 +38,15 @@ void ASCIIRenderer::InitialisePixelSize()
 	font_size->cbSize = sizeof(CONSOLE_FONT_INFOEX);
 	GetCurrentConsoleFontEx(m_hConsole, false, font_size);
 
-	font_size->dwFontSize.X = 2;	//Width of element in buffer
-	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
+	font_size->dwFontSize.X = 1;	//Width of element in buffer
+	font_size->dwFontSize.Y = 2;	//Hieght of element in buffer
 
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);	//Set the new font size
+}
+
+void ASCIIRenderer::SetPixelSize(unsigned char size)
+{
+
 }
 
 void ASCIIRenderer::SetWindow(int Width, int Height)
