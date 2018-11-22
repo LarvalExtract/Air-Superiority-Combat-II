@@ -6,7 +6,7 @@ ASCIIRenderer::ASCIIRenderer() :
 	m_Width(0),
 	m_Height(0),
 	m_bInitialised(false),
-	m_BackgroundColour(ConsoleColour::Black)
+	m_BackgroundColour(ConsoleColour::BACKGROUND_BLACK)
 {
 }
 
@@ -25,7 +25,7 @@ void ASCIIRenderer::Initialise(int width, int height)
 	
 	m_ScreenData = new CHAR_INFO[m_Width * m_Height];
 	
-	ClearScreen();
+	ClearScreen(ConsoleColour::BACKGROUND_SKYBLUE);
 
 	m_bInitialised = true;
 }
@@ -33,20 +33,22 @@ void ASCIIRenderer::Initialise(int width, int height)
 void ASCIIRenderer::InitialisePixelSize()
 {
 	//---Set up font size to look like pixel---
-	PCONSOLE_FONT_INFOEX font_size = new CONSOLE_FONT_INFOEX();
+	font_size = new CONSOLE_FONT_INFOEX();
 
 	font_size->cbSize = sizeof(CONSOLE_FONT_INFOEX);
 	GetCurrentConsoleFontEx(m_hConsole, false, font_size);
 
 	font_size->dwFontSize.X = 1;	//Width of element in buffer
-	font_size->dwFontSize.Y = 2;	//Hieght of element in buffer
+	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
 
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);	//Set the new font size
 }
 
 void ASCIIRenderer::SetPixelSize(unsigned char size)
 {
+	font_size->dwFontSize.Y = size;
 
+	SetCurrentConsoleFontEx(m_hConsole, false, font_size);
 }
 
 void ASCIIRenderer::SetWindow(int Width, int Height)
@@ -65,7 +67,7 @@ void ASCIIRenderer::SetWindow(int Width, int Height)
 	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
 	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);
 
-	LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
+	LPCTSTR windowTitle = "Air Superiority Combat II (4107COMP Assignment 1)";
 	SetConsoleTitle(windowTitle);
 }
 

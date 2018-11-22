@@ -23,6 +23,8 @@ void MainMenu::Initialise(int screenWidth)
 	menuSprites[MENU_START_GAME].SetPosition(halfScreenWidth - menuSprites[MENU_START_GAME].GetSize().x / 2, menuSprites[MENU_TITLE].GetPosition().y + menuSprites[MENU_TITLE].GetSize().y + 15);
 	menuSprites[MENU_HIGH_SCORE].SetPosition(halfScreenWidth - menuSprites[MENU_HIGH_SCORE].GetSize().x / 2, menuSprites[MENU_START_GAME].GetPosition().y + menuSprites[MENU_START_GAME].GetSize().y + 5);
 	menuSprites[MENU_QUIT_GAME].SetPosition(halfScreenWidth - menuSprites[MENU_QUIT_GAME].GetSize().x / 2, menuSprites[MENU_HIGH_SCORE].GetPosition().y + menuSprites[MENU_HIGH_SCORE].GetSize().y + 5);
+
+	menuSprites[MENU_START_GAME].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
 }
 
 void MainMenu::Update()
@@ -36,7 +38,7 @@ void MainMenu::Update()
 			if (m_MenuIndex > MENU_START_GAME)
 				m_MenuIndex--;
 
-			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BackgroundYellow);
+			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
 		}
 
 		m_bKeyIsPressed = true;
@@ -50,7 +52,7 @@ void MainMenu::Update()
 			if (m_MenuIndex < MAX_MENU_ITEMS - 1)
 				m_MenuIndex++;
 
-			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BackgroundYellow);
+			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
 		}
 
 		m_bKeyIsPressed = true;

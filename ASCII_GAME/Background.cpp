@@ -16,7 +16,7 @@ Background::Background(int width, int height) :
 
 	for (BackgroundItem& sprite : clouds)
 	{
-		sprite.SetPosition(Random(0, m_Boundary.x), Random(0, m_Boundary.y));
+		sprite.SetPosition(Random(0, m_Boundary.x), Random(0, m_Boundary.y - sprite.GetSize().y));
 	}
 }
 
@@ -29,11 +29,13 @@ void Background::Update(float deltaTime)
 {
 	for (BackgroundItem& sprite : clouds)
 	{
+		sprite.SetPosition(sprite.GetPosition().x - (sprite.GetSpeed() * deltaTime), sprite.GetPosition().y);
+
 		// Sprite has escaped the left side of the screen
 		if (sprite.GetPosition().x + sprite.GetSize().x < 0)
+		{
 			sprite.SetPosition(m_Boundary.x, Random(0, m_Boundary.y - sprite.GetSize().y));
-
-		sprite.SetPosition(sprite.GetPosition().x - (sprite.GetSpeed() * deltaTime), sprite.GetPosition().y);
+		}
 	}
 }
 

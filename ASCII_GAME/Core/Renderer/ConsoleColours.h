@@ -1,51 +1,45 @@
 #pragma once
 
 // colours from wincon.h
-//#define FOREGROUND_BLUE      0x0001 // text color contains blue.
-//#define FOREGROUND_GREEN     0x0002 // text color contains green.
-//#define FOREGROUND_RED       0x0004 // text color contains red.
-//#define FOREGROUND_INTENSITY 0x0008 // text color is intensified.
-//
-//#define BACKGROUND_BLUE      0x0010 // background color contains blue.
-//#define BACKGROUND_GREEN     0x0020 // background color contains green.
-//#define BACKGROUND_RED       0x0040 // background color contains red.
-//#define BACKGROUND_INTENSITY 0x0080 // background color is intensified.
+#define FOREGROUND_BLUE      0x0001 // text color contains blue.
+#define FOREGROUND_GREEN     0x0002 // text color contains green.
+#define FOREGROUND_RED       0x0004 // text color contains red.
+#define FOREGROUND_INTENSITY 0x0008 // text color is intensified.
+
+#define BACKGROUND_BLUE      0x0010 // background color contains blue.
+#define BACKGROUND_GREEN     0x0020 // background color contains green.
+#define BACKGROUND_RED       0x0040 // background color contains red.
+#define BACKGROUND_INTENSITY 0x0080 // background color is intensified.
 
 enum ConsoleColour : unsigned short
 {
-	Black = 0,
+	BACKGROUND_BRIGHT_RED		= BACKGROUND_RED | BACKGROUND_INTENSITY,
+	BACKGROUND_BRIGHT_GREEN		= BACKGROUND_GREEN | BACKGROUND_INTENSITY,
+	BACKGROUND_BRIGHT_BLUE		= BACKGROUND_BLUE | BACKGROUND_INTENSITY,
+	BACKGROUND_TURQOISE			= BACKGROUND_BLUE | BACKGROUND_GREEN,
+	BACKGROUND_SKYBLUE			= BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY,
+	BACKGROUND_PURPLE			= BACKGROUND_BLUE | BACKGROUND_RED,
+	BACKGROUND_PINK				= BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY,
+	BACKGROUND_MUSTARD			= BACKGROUND_GREEN | BACKGROUND_RED,
+	BACKGROUND_YELLOW			= BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY,
+	BACKGROUND_WHITE			= BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY,
+	BACKGROUND_GREY				= BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE,
+	BACKGROUND_DARK_GREY		= BACKGROUND_INTENSITY,
+	BACKGROUND_BLACK			= 0,
 
-	ForegroundRed			= 0x0004 | 0x0008,
-	ForegroundGreen			= 0x0002 | 0x0008,
-	ForegroundBlue			= 0x0001 | 0x0008,
-	ForegroundYellow		= 0x0004 | 0x0002 | 0x0008,
-	ForegroundPink			= 0x0004 | 0x0001 | 0x0008,
-	ForegroundCyan			= 0x0001 | 0x0002 | 0x0008,
-	ForegroundWhite			= 0x0004 | 0x0001 | 0x0002 | 0x0008,
-	ForegroundGrey			= 0x0004 | 0x0001 | 0x0002,
-	ForegroundDarkRed		= 0x0004,
-	ForegroundDarkGreen		= 0x0002,
-	ForegroundDarkBlue		= 0x0001,
-	ForegroundDarkYellow	= 0x0004 | 0x0002,
-	ForegroundDarkPink		= 0x0004 | 0x0001,
-	ForegroundDarkCyan		= 0x0001 | 0x0002,
-	ForegroundDarkGrey		= 0x0008,
-
-	BackgroundRed			= 0x0040 | 0x0080,
-	BackgroundGreen			= 0x0020 | 0x0080,
-	BackgroundBlue			= 0x0010 | 0x0080,
-	BackgroundYellow		= 0x0040 | 0x0020 | 0x0080,
-	BackgroundPink			= 0x0040 | 0x0010 | 0x0080,
-	BackgroundCyan			= 0x0010 | 0x0020 | 0x0080,
-	BackgroundWhite			= 0x0040 | 0x0010 | 0x0020 | 0x0080,
-	BackgroundGrey			= 0x0040 | 0x0010 | 0x0020,
-	BackgroundDarkRed		= 0x0040,
-	BackgroundDarkGreen		= 0x0020,
-	BackgroundDarkBlue		= 0x0010,
-	BackgroundDarkYellow	= 0x0040 | 0x0020,
-	BackgroundDarkPink		= 0x0040 | 0x0010,
-	BackgroundDarkCyan		= 0x0010 | 0x0020,
-	BackgroundDarkGrey		= 0x0080
+	FOREGROUND_BRIGHT_RED		= FOREGROUND_RED | FOREGROUND_INTENSITY,
+	FOREGROUND_BRIGHT_GREEN		= FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+	FOREGROUND_BRIGHT_BLUE		= FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+	FOREGROUND_TURQOISE			= FOREGROUND_BLUE | FOREGROUND_GREEN,
+	FOREGROUND_SKYBLUE			= FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+	FOREGROUND_PURPLE			= FOREGROUND_BLUE | FOREGROUND_RED,
+	FOREGROUND_PINK				= FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY,
+	FOREGROUND_MUSTARD			= FOREGROUND_GREEN | FOREGROUND_RED,
+	FOREGROUND_YELLOW			= FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY,
+	FOREGROUND_WHITE			= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+	FOREGROUND_GREY				= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+	FOREGROUND_DARK_GREY		= FOREGROUND_INTENSITY,
+	FOREGROUND_BLACK			= 0
 };
 
 inline ConsoleColour operator|(ConsoleColour lhs, const ConsoleColour& rhs)

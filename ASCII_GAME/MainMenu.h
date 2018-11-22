@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Core/Renderer/Sprite.h"
+#include "Game/GameStates.h"
 
 class ASCIIRenderer;
 
 const int MAX_MENU_ITEMS = 4;
 
-enum MenuOption
+enum MenuOption : unsigned char
 {
-	OPTION_START_GAME,
+	OPTION_START_GAME = 1,
 	OPTION_HIGH_SCORE,
 	OPTION_QUIT_GAME
 };

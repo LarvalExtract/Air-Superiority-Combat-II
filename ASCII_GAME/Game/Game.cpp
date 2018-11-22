@@ -98,14 +98,35 @@ void Game::Update()
 
 	switch (state)
 	{
-	case E_GAME_STATE_MAIN_MENU:	mainMenu.Update(); break;
+	case E_GAME_STATE_MAIN_MENU:	UpdateMainMenu(); break;
 	case E_GAME_STATE_IN_GAME:		UpdateGame(); break;
+	}
+}
+
+void Game::UpdateMainMenu()
+{
+	mainMenu.Update();
+
+	if (GetKeyState(VK_ESCAPE) < 0)
+	{
+		m_bExitApp = true;
+		return;
+	}
+
+	if (GetKeyState(VK_RETURN) < 0)
+	{
+		switch (mainMenu.GetSelectedMenuOption())
+		{
+		case OPTION_START_GAME: state = E_GAME_STATE_IN_GAME; break;
+		case OPTION_HIGH_SCORE: break;
+		case OPTION_QUIT_GAME: m_bExitApp = true; break;
+		}
 	}
 }
 
 void Game::UpdateGame()
 {
-	ProcessInputs();
+	UpdatePlayer();
 
 	UpdatePlayerProjectiles();
 	UpdateEnemyProjectiles();
@@ -117,7 +138,7 @@ void Game::UpdateGame()
 void Game::Render()
 {
 	//call this first
-	m_pRenderer->ClearScreen(ConsoleColour::BackgroundCyan);
+	m_pRenderer->ClearScreen(ConsoleColour::BACKGROUND_SKYBLUE);
 
 	// Render background
 	clouds.Render(m_pRenderer);
@@ -143,14 +164,8 @@ void Game::RenderGame()
 	RenderProjectiles();
 }
 
-void Game::ProcessInputs()
+void Game::UpdatePlayer()
 {
-	if (GetKeyState(VK_ESCAPE) < 0)
-	{
-		m_bExitApp = true;
-		return;
-	}
-
 	// Move player up
 	if (GetKeyState(VK_UP) < 0)
 		player.MoveUp(m_deltaTime);
@@ -159,10 +174,9 @@ void Game::ProcessInputs()
 	if (GetKeyState(VK_DOWN) < 0)
 		player.MoveDown(m_deltaTime);
 
-
 	// Prevent player from going above or below the screen
-	if (player.GetPosition().y < 0)
-		player.SetPosition(player.GetPosition().x, 0);
+	if (player.GetPosition().y < SCREEN_BOUNDARY_TOP)
+		player.SetPosition(player.GetPosition().x, SCREEN_BOUNDARY_TOP);
 	else if (player.GetPosition().y + player.GetSize().y > SCREEN_HEIGHT)
 		player.SetPosition(player.GetPosition().x, SCREEN_HEIGHT - player.GetSize().y);
 

@@ -5,7 +5,7 @@ void Plane::ApplyDamage(float damage)
 {
 	m_Health -= damage;
 
-	SetPixelOverrideColour(ConsoleColour::BackgroundRed);
+	SetPixelOverrideColour(ConsoleColour::BACKGROUND_BRIGHT_RED);
 
 	if (m_Health <= 0.0f)
 		m_bDestroyed = true;

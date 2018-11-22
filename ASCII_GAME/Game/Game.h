@@ -27,11 +27,12 @@ private:
 	void Update();
 	void Render();
 
+	void UpdateMainMenu();
 	void UpdateGame();
 
 	void RenderGame();
 
-	void ProcessInputs();
+	void UpdatePlayer();
 	void UpdatePlayerProjectiles();
 	void UpdateEnemyProjectiles();
 
