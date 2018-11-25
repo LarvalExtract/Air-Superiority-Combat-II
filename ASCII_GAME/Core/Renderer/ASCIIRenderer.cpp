@@ -39,14 +39,17 @@ void ASCIIRenderer::InitialisePixelSize()
 	GetCurrentConsoleFontEx(m_hConsole, false, font_size);
 
 	font_size->dwFontSize.X = 1;	//Width of element in buffer
-	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
+	font_size->dwFontSize.Y = 2;	//Hieght of element in buffer
+
+	m_ScreenSize = SCREENSIZE_SMALL;
 
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);	//Set the new font size
 }
 
-void ASCIIRenderer::SetPixelSize(unsigned char size)
+void ASCIIRenderer::SetPixelSize(ScreenSize size)
 {
-	font_size->dwFontSize.Y = size;
+	m_ScreenSize = size;
+	font_size->dwFontSize.Y = m_ScreenSize;
 
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);
 }
@@ -67,7 +70,7 @@ void ASCIIRenderer::SetWindow(int Width, int Height)
 	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
 	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);
 
-	LPCTSTR windowTitle = "Air Superiority Combat II (4107COMP Assignment 1)";
+	LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
 	SetConsoleTitle(windowTitle);
 }
 

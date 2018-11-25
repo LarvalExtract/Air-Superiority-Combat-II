@@ -5,12 +5,13 @@
 
 class ASCIIRenderer;
 
-const int MAX_MENU_ITEMS = 4;
+const int MAX_MENU_ITEMS = 5;
 
 enum MenuOption : unsigned char
 {
 	OPTION_START_GAME = 1,
 	OPTION_HIGH_SCORE,
+	OPTION_CHANGE_SCREEN_SIZE,
 	OPTION_QUIT_GAME
 };
 
@@ -23,7 +24,7 @@ public:
 	void Update();
 	void Render(ASCIIRenderer* pRenderer);
 
-	MenuOption GetSelectedMenuOption();
+	MenuOption GetSelectedMenuOption() const { return static_cast<MenuOption>(m_MenuIndex); }
 
 private:
 	Sprite menuSprites[MAX_MENU_ITEMS];

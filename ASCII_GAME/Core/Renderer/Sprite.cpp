@@ -41,12 +41,13 @@ void Sprite::SetImage(const char* bmpFile)
 
 	TGAFile tga(SPRITE_FOLDER_PATH + bmpFile);
 
+	// Console pixels are half as wide as they are tall
+	// Width is doubled to make square pixels
 	m_Size.x = tga.Width() * 2;
 	m_Size.y = tga.Height();
 
 	m_PixelData = new CONSOLE_PIXEL[m_Size.x * m_Size.y];
 
-	// TGA rows are stored bottom to top, must be copied in reverse order
 	for (int y = 0; y < m_Size.y; y++)
 	{
 		for (int x = 0; x < m_Size.x; x += 2)
@@ -183,12 +184,12 @@ void Sprite::Render(ASCIIRenderer* pRenderer)
 			{
 				int index = x + (y * m_Size.x);
 
-				if (!m_PixelData[index].transparent)
+				if (m_PixelData[index].bOpaque)
 				{
-					if (m_PixelOverride.Attributes != 0)
-						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelOverride);
+					if (m_PixelOverride.Attributes == 0)
+						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelData[index].char_info);
 					else
-						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelData[index].charInfo);
+						pRenderer->SetPixel(static_cast<int>(m_Position.x) + x, static_cast<int>(m_Position.y) + y, m_PixelOverride);
 				}
 			}
 		}
@@ -212,41 +213,46 @@ bool Sprite::Collides(Sprite& otherSprite)
 // Lots of colour accuracy lost!
 CONSOLE_PIXEL SamplePixel(unsigned int pixel)
 {
-	unsigned char blue = (pixel & 0xFF) >> 6;
-	unsigned char green = ((pixel >> 8) & 0xFF) >> 6;
-	unsigned char red = ((pixel >> 16) & 0xFF) >> 6;
-	unsigned char alpha = ((pixel >> 24) & 0xFF) >> 7;
+	// Extract BGRA channels to seperate unsigned chars
+	unsigned char b = pixel & 0xFF;
+	unsigned char g = (pixel >> 8) & 0xFF;
+	unsigned char r = (pixel >> 16) & 0xFF;
+	unsigned char a = (pixel >> 24) & 0xFF;
+
+	// Reduce colour accuracy from 256 values to 4
+	b >>= 6;
+	g >>= 6;
+	r >>= 6;
+	a >>= 7;	// Alpha becomes 0 (transparent) or 1 (opaque)
 
 	CONSOLE_PIXEL character;
-	character.charInfo.Char.UnicodeChar = 0;
-	character.charInfo.Attributes = 0;
-	character.transparent = false;
+	character.char_info.Char.UnicodeChar = 0;
+	character.char_info.Attributes = 0;
+	character.bOpaque = a;
 
-	if (alpha == 0)
-		character.transparent = true;
+	// Return character if it's transparent
+	if (!character.bOpaque)
+		return character;
 
-	else
+	switch (r)
 	{
-		switch (red)
-		{
-		case 1: character.charInfo.Attributes |= BACKGROUND_RED; break;
-		case 2: character.charInfo.Attributes |= BACKGROUND_RED | BACKGROUND_INTENSITY; break;
-		case 3: character.charInfo.Attributes |= BACKGROUND_RED | BACKGROUND_INTENSITY; break;
-		}
+	case 1: character.char_info.Attributes |= BACKGROUND_RED; break;
+	case 2: character.char_info.Attributes |= BACKGROUND_RED; break;
+	case 3: character.char_info.Attributes |= BACKGROUND_RED | BACKGROUND_INTENSITY; break;
+	}
 
-		switch (green)
-		{
-		case 1: character.charInfo.Attributes |= BACKGROUND_GREEN; break;
-		case 2: character.charInfo.Attributes |= BACKGROUND_GREEN | BACKGROUND_INTENSITY; break;
-		case 3: character.charInfo.Attributes |= BACKGROUND_GREEN | BACKGROUND_INTENSITY; break;
-		}
+	switch (g)
+	{
+	case 1: character.char_info.Attributes |= BACKGROUND_GREEN; break;
+	case 2: character.char_info.Attributes |= BACKGROUND_GREEN; break;
+	case 3: character.char_info.Attributes |= BACKGROUND_GREEN | BACKGROUND_INTENSITY; break;
+	}
 
-		switch (blue)
-		{
-		case 1: character.charInfo.Attributes |= BACKGROUND_BLUE; break;
-		case 2: character.charInfo.Attributes |= BACKGROUND_BLUE | BACKGROUND_INTENSITY; break;
-		case 3: character.charInfo.Attributes |= BACKGROUND_BLUE | BACKGROUND_INTENSITY; break;
-		}
+	switch (b)
+	{
+	case 1: character.char_info.Attributes |= BACKGROUND_BLUE; break;
+	case 2: character.char_info.Attributes |= BACKGROUND_BLUE; break;
+	case 3: character.char_info.Attributes |= BACKGROUND_BLUE | BACKGROUND_INTENSITY; break;
 	}
 
 	return character;

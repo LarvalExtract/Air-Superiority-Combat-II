@@ -4,6 +4,12 @@
 #include "ConsoleColours.h"
 #include <Windows.h>
 
+enum ScreenSize : short
+{
+	SCREENSIZE_SMALL = 2,
+	SCREENSIZE_LARGE = 4
+};
+
 class ASCIIRenderer
 {
 public:
@@ -12,7 +18,9 @@ public:
 
 	void Initialise(int width, int height);
 	void InitialisePixelSize();
-	void SetPixelSize(unsigned char size);
+
+	ScreenSize GetPixelSize() const { return m_ScreenSize; }
+	void SetPixelSize(ScreenSize size);
 
 	void Render();
 
@@ -30,6 +38,8 @@ private:
 	short m_Height;
 	ConsoleColour m_BackgroundColour;
 	PCONSOLE_FONT_INFOEX font_size;
+
+	ScreenSize m_ScreenSize;
 
 	bool m_bInitialised;
 };

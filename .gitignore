@@ -3,4 +3,6 @@
 ConsoleColourTest/
 Debug/
 ASCII_GAME/Debug/
+Release/
+ASCII_GAME/Release
 ConsoleColourTest.sln

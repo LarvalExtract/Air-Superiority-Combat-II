@@ -7,6 +7,7 @@
 #include "../Projectile.h"
 #include "../Background.h"
 #include "../MainMenu.h"
+#include "../SpriteText.h"
 #include <vector>
 
 class ASCIIRenderer;
@@ -58,9 +59,10 @@ private:
 	Timer<float> gameTimer;
 	float m_deltaTime;
 
-	E_GAME_STATE state;
+	E_GAME_STATE m_GameState;
 
 	MainMenu mainMenu;
+	SpriteText m_ScoreDisplay;
 };
 
 

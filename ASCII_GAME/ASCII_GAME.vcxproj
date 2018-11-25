@@ -45,7 +45,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -80,6 +80,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="SpriteText.cpp" />
     <ClCompile Include="TGAFile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +99,8 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="SpriteCharacter.h" />
+    <ClInclude Include="SpriteText.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vec2.h" />

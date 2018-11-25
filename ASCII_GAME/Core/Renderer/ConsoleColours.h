@@ -41,8 +41,3 @@ enum ConsoleColour : unsigned short
 	FOREGROUND_DARK_GREY		= FOREGROUND_INTENSITY,
 	FOREGROUND_BLACK			= 0
 };
-
-inline ConsoleColour operator|(ConsoleColour lhs, const ConsoleColour& rhs)
-{
-	return lhs | rhs;
-}

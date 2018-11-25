@@ -41,6 +41,9 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteText.cpp">
+      <Filter>Core\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -113,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="MainMenu.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteCharacter.h">
+      <Filter>Core\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteText.h">
+      <Filter>Core\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

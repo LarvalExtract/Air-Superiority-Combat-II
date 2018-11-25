@@ -11,8 +11,8 @@ class ASCIIRenderer;
 // Custom character which adds a transparency flag
 struct CONSOLE_PIXEL
 {
-	CHAR_INFO charInfo;
-	bool transparent;
+	CHAR_INFO char_info;
+	bool bOpaque;
 };
 
 class Sprite

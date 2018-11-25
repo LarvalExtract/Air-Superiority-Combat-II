@@ -24,7 +24,7 @@ Game::Game() :
 	m_bInitialised(false),
 	m_bExitApp(false),
 	clouds(SCREEN_WIDTH, SCREEN_HEIGHT),
-	state(E_GAME_STATE_MAIN_MENU)
+	m_GameState(E_GAME_STATE_MAIN_MENU)
 {
 	playerProjectiles.reserve(MAX_PLAYER_PROJECTILES);
 	enemyProjectiles.reserve(MAX_ENEMY_PROJECTILES);
@@ -50,6 +50,10 @@ void Game::Initialise()
 	InitialiseRenderer();
 	
 	mainMenu.Initialise(SCREEN_WIDTH);
+
+	m_ScoreDisplay.Initialise();
+	m_ScoreDisplay.SetText("005070");
+	m_ScoreDisplay.SetPosition(5, 3);
 
 	pEnemies.push_back(new Enemy(ENEMY_LIGHT));
 	pEnemies.push_back(new Enemy(ENEMY_BIPLANE));
@@ -82,9 +86,9 @@ void Game::Run()
 
 	while (!m_bExitApp)
 	{
-		lastTime = newTime;
 		newTime = gameTimer.Elapsed();
 		m_deltaTime = newTime - lastTime;
+		lastTime = newTime;
 
 		Update();
 
@@ -96,31 +100,62 @@ void Game::Update()
 {
 	clouds.Update(m_deltaTime);
 
-	switch (state)
+	switch (m_GameState)
 	{
 	case E_GAME_STATE_MAIN_MENU:	UpdateMainMenu(); break;
 	case E_GAME_STATE_IN_GAME:		UpdateGame(); break;
 	}
 }
 
+void Game::Render()
+{
+	//call this first
+	m_pRenderer->ClearScreen(ConsoleColour::BACKGROUND_SKYBLUE);
+
+	// Render background
+	clouds.Render(m_pRenderer);
+
+	switch (m_GameState)
+	{
+	case E_GAME_STATE_MAIN_MENU:	mainMenu.Render(m_pRenderer); break;
+	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
+	}
+
+	//call this last
+	m_pRenderer->Render();
+}
+
 void Game::UpdateMainMenu()
 {
 	mainMenu.Update();
 
-	if (GetKeyState(VK_ESCAPE) < 0)
-	{
-		m_bExitApp = true;
-		return;
-	}
-
+	static bool bIsReturnPressed = false;
 	if (GetKeyState(VK_RETURN) < 0)
 	{
-		switch (mainMenu.GetSelectedMenuOption())
+		if (!bIsReturnPressed)
 		{
-		case OPTION_START_GAME: state = E_GAME_STATE_IN_GAME; break;
-		case OPTION_HIGH_SCORE: break;
-		case OPTION_QUIT_GAME: m_bExitApp = true; break;
+			switch (mainMenu.GetSelectedMenuOption())
+			{
+			case OPTION_START_GAME:				// Start game
+				m_GameState = E_GAME_STATE_IN_GAME;
+				break;
+			case OPTION_HIGH_SCORE:				// Show highest score
+
+				break;
+			case OPTION_CHANGE_SCREEN_SIZE:		// Toggle screen size
+				m_pRenderer->GetPixelSize() == SCREENSIZE_SMALL ? m_pRenderer->SetPixelSize(SCREENSIZE_LARGE) : m_pRenderer->SetPixelSize(SCREENSIZE_SMALL);
+				break;
+			case OPTION_QUIT_GAME:				// Close game
+				m_bExitApp = true;
+				break;
+			}
+
+			bIsReturnPressed = true;
 		}
+	}
+	else
+	{
+		bIsReturnPressed = false;
 	}
 }
 
@@ -133,24 +168,11 @@ void Game::UpdateGame()
 
 	for (int i = 0; i < pEnemies.size(); i++)
 		pEnemies[i]->Update(m_deltaTime);
-}
 
-void Game::Render()
-{
-	//call this first
-	m_pRenderer->ClearScreen(ConsoleColour::BACKGROUND_SKYBLUE);
-
-	// Render background
-	clouds.Render(m_pRenderer);
-
-	switch (state)
+	if (gameTimer.Elapsed() > 30.0f)
 	{
-	case E_GAME_STATE_MAIN_MENU:	mainMenu.Render(m_pRenderer); break;
-	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
+		gameTimer.Reset();
 	}
-
-	//call this last
-	m_pRenderer->Render();
 }
 
 void Game::RenderGame()
@@ -162,6 +184,8 @@ void Game::RenderGame()
 		pEnemies[i]->Render(m_pRenderer);
 
 	RenderProjectiles();
+
+	m_ScoreDisplay.Render(m_pRenderer);
 }
 
 void Game::UpdatePlayer()
@@ -181,9 +205,21 @@ void Game::UpdatePlayer()
 		player.SetPosition(player.GetPosition().x, SCREEN_HEIGHT - player.GetSize().y);
 
 	// Shoot projectile
+	static bool bSpaceIsPressed = false;
+
 	if (GetKeyState(VK_SPACE) < 0)
-		if (player.TimeSinceLastShot() > player.ShootCooldownTime())
-			player.Shoot(GetPlayerProjectile());
+	{
+		if (!bSpaceIsPressed)
+		{
+			if (player.TimeSinceLastShot() > player.ShootCooldownTime())
+				player.Shoot(GetPlayerProjectile());
+			bSpaceIsPressed = true;
+		}
+	}
+	else
+	{
+		bSpaceIsPressed = false;
+	}
 }
 
 void Game::UpdatePlayerProjectiles()
