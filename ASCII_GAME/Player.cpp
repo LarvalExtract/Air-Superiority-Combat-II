@@ -10,7 +10,7 @@ Player::Player() :
 	SetImage("player.tga");
 	m_Health = 10.0f;
 	m_Speed = 150.0f;
-	m_ShootCooldown = 0.2f;
+	m_ShootCooldown = 0.1f;
 }
 
 void Player::Update(float deltaTime)

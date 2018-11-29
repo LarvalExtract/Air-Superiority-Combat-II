@@ -21,7 +21,6 @@ public:
 private:
 	static std::map<char, SpriteCharacter*> m_Characters;
 
-	std::string m_Text;
 	std::vector<SpriteCharacter> m_Sprites;
 	Vec2<int> m_Position;
 };

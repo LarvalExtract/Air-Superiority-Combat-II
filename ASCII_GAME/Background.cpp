@@ -10,7 +10,7 @@ Background::Background(int width, int height) :
 
 	clouds.reserve(10);
 	for (int i = 0; i < 10; i++)
-		clouds.emplace_back("cloud1.tga", Random(5, 20));
+		clouds.emplace_back("cloud1.tga", Random(30, 60));
 
 	for (BackgroundItem& sprite : clouds)
 	{
@@ -27,7 +27,7 @@ void Background::Update(float deltaTime)
 {
 	for (BackgroundItem& sprite : clouds)
 	{
-		sprite.SetPosition(sprite.GetPosition().x - sprite.GetSpeed(), sprite.GetPosition().y);
+		sprite.SetPosition(sprite.GetPosition().x - sprite.GetSpeed() * deltaTime, sprite.GetPosition().y);
 
 		// Sprite has escaped the left side of the screen
 		if (sprite.GetPosition().x + sprite.GetSize().x < 0)

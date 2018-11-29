@@ -32,7 +32,7 @@ public:
 
 	void Render(ASCIIRenderer* pRenderer);
 
-	void SetPosition(int x, int y) { m_Position.x = x; m_Position.y = y; }
+	void SetPosition(float x, float y) { m_Position.x = x; m_Position.y = y; }
 	void SetPosition(Vec2<float>& position) { m_Position = position; }
 	void SetPixelOverrideColour(ConsoleColour colour) { m_PixelOverride.Attributes = colour; }
 	void ClearPixelOverrideColour() { m_PixelOverride.Attributes = 0; }

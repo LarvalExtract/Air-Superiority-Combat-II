@@ -20,18 +20,16 @@ void SpriteText::Initialise()
 
 void SpriteText::SetText(const std::string &text)
 {
-	m_Text = text;
-
 	m_Sprites.clear();
 	m_Sprites.reserve(text.size());
 
-	for (int i = 0; i < m_Text.size(); i++)
-		m_Sprites.push_back(*m_Characters[m_Text[i]]);
+	for (int i = 0; i < text.size(); i++)
+		m_Sprites.push_back(*m_Characters[text[i]]);
 }
 
 void SpriteText::SetPosition(int x, int y)
 {
-	if (m_Text.empty())
+	if (m_Sprites.empty())
 		return;
 
 	m_Sprites[0].SetPosition(x, y);
