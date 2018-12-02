@@ -44,6 +44,9 @@
     <ClCompile Include="SpriteText.cpp">
       <Filter>Core\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteAnimation.cpp">
+      <Filter>Core\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -121,6 +124,9 @@
       <Filter>Core\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SpriteText.h">
+      <Filter>Core\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteAnimation.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,7 +8,10 @@
 #include "../Background.h"
 #include "../MainMenu.h"
 #include "../SpriteText.h"
+#include "../SpriteAnimation.h"
 #include <vector>
+
+#include "../Timer.h"
 
 class ASCIIRenderer;
 
@@ -25,18 +28,16 @@ private:
 
 	//Functions
 	void InitialiseRenderer();
-	void Update();
+	void Update(float deltaTime);
 	void Render();
 
 	void UpdateMainMenu();
-	void UpdateGame();
+	void UpdateGame(float deltaTime);
+	void UpdatePlayer(float deltaTime);
+	void UpdatePlayerProjectiles(float deltaTime);
+	void UpdateEnemyProjectiles(float deltaTime);
 
 	void RenderGame();
-
-	void UpdatePlayer();
-	void UpdatePlayerProjectiles();
-	void UpdateEnemyProjectiles();
-
 	void RenderProjectiles();
 
 	//Variables
@@ -57,12 +58,12 @@ private:
 	bool m_bExitApp;
 
 	Timer<float> gameTimer;
-	float m_deltaTime;
 
 	E_GAME_STATE m_GameState;
 
 	MainMenu mainMenu;
 	SpriteText m_ScoreDisplay;
+	SpriteAnimation animTest;
 };
 
 

@@ -15,5 +15,11 @@ Player::Player() :
 
 void Player::Update(float deltaTime)
 {
+	Plane::Update(deltaTime);
 
+	if (GetKeyState(VK_DOWN) < 0)
+		m_Position.y += m_Speed * deltaTime;
+
+	if (GetKeyState(VK_UP) < 0)
+		m_Position.y -= m_Speed * deltaTime;
 }

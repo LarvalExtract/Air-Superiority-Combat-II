@@ -14,6 +14,7 @@ const wchar_t SHADE_DARK = L'\u2593';
 
 // Function prototypes
 CONSOLE_PIXEL SamplePixel(unsigned int pixel);
+void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<int> size);
 
 Sprite::Sprite() :
 	m_PixelData(nullptr),
@@ -46,25 +47,39 @@ void Sprite::SetImage(const char* bmpFile)
 	m_Size.x = tga.Width() * 2;
 	m_Size.y = tga.Height();
 
-	m_PixelData = new CONSOLE_PIXEL[m_Size.x * m_Size.y];
-
-	for (int y = 0; y < m_Size.y; y++)
-	{
-		for (int x = 0; x < m_Size.x; x += 2)
-		{
-			CONSOLE_PIXEL pixel = SamplePixel(tga.GetPixel((x >> 1) + (y * (tga.Width()))));
-
-			int dstIndex = x + (y * m_Size.x);
-
-			m_PixelData[dstIndex] = pixel;
-			m_PixelData[dstIndex + 1] = pixel;
-		}
-	}
+	ConvertPixels(tga.Pixels(), m_PixelData, m_Size);
 
 	m_bInitialised = true;
 }
 
+void Sprite::Initialise(unsigned int* bgraPixels, Vec2<int>& size)
+{
+	m_Size.x = size.x * 2;
+	m_Size.y = size.y;
 
+	ConvertPixels(bgraPixels, m_PixelData, m_Size);
+
+	m_bInitialised = true;
+}
+
+void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<int> size)
+{
+	destination = new CONSOLE_PIXEL[size.x * size.y];
+
+	int srcWidth = size.x / 2;
+	for (int y = 0; y < size.y; y++)
+	{
+		for (int x = 0; x < size.x; x += 2)
+		{
+			CONSOLE_PIXEL pixel = SamplePixel(source[(x >> 1) + (y * (srcWidth))]);
+
+			int dstIndex = x + (y * size.x);
+
+			destination[dstIndex] = pixel;
+			destination[dstIndex + 1] = pixel;
+		}
+	}
+}
 
 //void Sprite::Initialise(int* pixels, Vector2& size)
 //{

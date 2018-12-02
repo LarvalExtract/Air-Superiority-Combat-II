@@ -55,6 +55,8 @@ void Game::Initialise()
 	m_ScoreDisplay.SetText("005070");
 	m_ScoreDisplay.SetPosition(5, 3);
 
+	animTest.SetSpriteSheet("../sprites/explosion.tga", 6);
+
 	pEnemies.push_back(new Enemy(ENEMY_LIGHT));
 	pEnemies.push_back(new Enemy(ENEMY_BIPLANE));
 	pEnemies.push_back(new Enemy(ENEMY_MEDIUM));
@@ -83,27 +85,28 @@ void Game::Run()
 {
 	float lastTime = 0.0f;
 	float newTime = gameTimer.Elapsed();
+	float deltaTime;
 
 	while (!m_bExitApp)
 	{
 		newTime = gameTimer.Elapsed();
-		m_deltaTime = newTime - lastTime;
+		deltaTime = newTime - lastTime;
 		lastTime = newTime;
 
-		Update();
+		Update(deltaTime);
 
 		Render();
 	}
 }
 
-void Game::Update()
+void Game::Update(float deltaTime)
 {
-	clouds.Update(m_deltaTime);
+	clouds.Update(deltaTime);
 
 	switch (m_GameState)
 	{
 	case E_GAME_STATE_MAIN_MENU:	UpdateMainMenu(); break;
-	case E_GAME_STATE_IN_GAME:		UpdateGame(); break;
+	case E_GAME_STATE_IN_GAME:		UpdateGame(deltaTime); break;
 	}
 }
 
@@ -120,6 +123,8 @@ void Game::Render()
 	case E_GAME_STATE_MAIN_MENU:	mainMenu.Render(m_pRenderer); break;
 	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
 	}
+
+	animTest.Render(m_pRenderer, 3);
 
 	//call this last
 	m_pRenderer->Render();
@@ -159,20 +164,17 @@ void Game::UpdateMainMenu()
 	}
 }
 
-void Game::UpdateGame()
+void Game::UpdateGame(float deltaTime)
 {
-	UpdatePlayer();
+	UpdatePlayer(deltaTime);
 
-	UpdatePlayerProjectiles();
-	UpdateEnemyProjectiles();
+	UpdatePlayerProjectiles(deltaTime);
+	UpdateEnemyProjectiles(deltaTime);
 
 	for (int i = 0; i < pEnemies.size(); i++)
-		pEnemies[i]->Update(m_deltaTime);
+		if (!pEnemies[i]->IsDestroyed())
+			pEnemies[i]->Update(deltaTime);
 
-	if (gameTimer.Elapsed() > 30.0f)
-	{
-		gameTimer.Reset();
-	}
 }
 
 void Game::RenderGame()
@@ -181,32 +183,27 @@ void Game::RenderGame()
 	player.Render(m_pRenderer);
 
 	for (int i = 0; i < pEnemies.size(); i++)
-		pEnemies[i]->Render(m_pRenderer);
+		if (!pEnemies[i]->IsDestroyed())
+			pEnemies[i]->Render(m_pRenderer);
 
 	RenderProjectiles();
 
 	m_ScoreDisplay.Render(m_pRenderer);
 }
 
-void Game::UpdatePlayer()
+void Game::UpdatePlayer(float deltaTime)
 {
-	// Move player up
-	if (GetKeyState(VK_UP) < 0)
-		player.MoveUp(m_deltaTime);
-
-	// Move player down
-	if (GetKeyState(VK_DOWN) < 0)
-		player.MoveDown(m_deltaTime);
+	player.Update(deltaTime);
 
 	// Prevent player from going above or below the screen
 	if (player.GetPosition().y < SCREEN_BOUNDARY_TOP)
 		player.SetPosition(player.GetPosition().x, SCREEN_BOUNDARY_TOP);
+
 	else if (player.GetPosition().y + player.GetSize().y > SCREEN_HEIGHT)
 		player.SetPosition(player.GetPosition().x, SCREEN_HEIGHT - player.GetSize().y);
 
 	// Shoot projectile
 	static bool bSpaceIsPressed = false;
-
 	if (GetKeyState(VK_SPACE) < 0)
 	{
 		if (!bSpaceIsPressed)
@@ -222,13 +219,13 @@ void Game::UpdatePlayer()
 	}
 }
 
-void Game::UpdatePlayerProjectiles()
+void Game::UpdatePlayerProjectiles(float deltaTime)
 {
 	for (Projectile& projectile : playerProjectiles)
 	{
 		if (projectile.IsFiring())
 		{
-			projectile.Update(m_deltaTime);
+			projectile.Update(deltaTime);
 
 			// Disable projectile if it's left the screen, and skip to the next projectile
 			if (projectile.GetPosition().x > SCREEN_WIDTH)
@@ -240,27 +237,32 @@ void Game::UpdatePlayerProjectiles()
 			// Check if the projectile has hit any of the enemies on screen
 			for (int j = 0; j < pEnemies.size(); j++)
 			{
-				if (projectile.Collides(*pEnemies[j]))
+				if (!pEnemies[j]->IsDestroyed())
 				{
-					pEnemies[j]->ApplyDamage(projectile.GetDamage());
+					if (projectile.Collides(*pEnemies[j]))
+					{
+						pEnemies[j]->ApplyDamage(projectile.GetDamage());
 
-					if (pEnemies[j]->IsDestroyed())
-						player.AddScore(pEnemies[j]->GetPoints());
+						if (pEnemies[j]->IsDestroyed())
+							player.AddScore(pEnemies[j]->GetPoints());
 
-					projectile.SetFiringState(false);
+						projectile.SetFiringState(false);
+
+						break;
+					}
 				}
 			}
 		}
 	}
 }
 
-void Game::UpdateEnemyProjectiles()
+void Game::UpdateEnemyProjectiles(float deltaTime)
 {
 	for (Projectile& projectile : enemyProjectiles)
 	{
 		if (projectile.IsFiring())
 		{
-			projectile.Update(m_deltaTime);
+			projectile.Update(deltaTime);
 
 			if (projectile.GetPosition().x + projectile.GetSize().x < 0)
 			{

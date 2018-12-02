@@ -25,6 +25,7 @@ public:
 
 	void SetImage(const char* bmpFile);
 
+	void Initialise(unsigned int* bgraPixels, Vec2<int>& size);
 	//void Initialise(int* pixels, Vector2& size);
 	//void Initialise(CHAR_INFO* pixels, Vector2& size);
 	//void Initialise(char* pixels, ConsoleColour colour, Vector2& size);
