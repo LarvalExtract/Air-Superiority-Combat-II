@@ -4,7 +4,7 @@
 float Enemy::s_DeltaTime = 0.0f;
 
 char	Enemy::s_biplaneRounds = 3;
-char	Enemy::s_mediumFireChance = 25;
+char	Enemy::s_mediumFireChance = 10;
 float	Enemy::s_gunshipFireRate = 2.0f;
 
 Enemy::Enemy(EnemyType type) :
@@ -68,7 +68,7 @@ void Enemy::Update(float deltaTime)
 	m_Position.x -= m_Speed * deltaTime;
 }
 
-bool Enemy::FiredWeapon()
+bool Enemy::Fire()
 {
 	switch (type)
 	{
@@ -82,19 +82,15 @@ bool Enemy::FiredWeapon()
 
 bool Enemy::FireMedium()
 {
-	static float time = 0.0f;
-
-	time += s_DeltaTime;
-
-	if (time > 0.5f)
+	if (m_TimeSinceLastShot > 0.5f)
 	{
 		if (Random(1, 100) < s_mediumFireChance)
 		{
-			time = 0.0f;
+			m_TimeSinceLastShot = 0.0f;
 			return true;
 		}
 
-		time = 0.0f;
+		m_TimeSinceLastShot = 0.0f;
 	}
 
 	return false;
@@ -102,13 +98,11 @@ bool Enemy::FireMedium()
 
 bool Enemy::FireBiplane()
 {
-	static float time = 0.0f;
 	static float bulletTime = 0.0f;
 
-	time += s_DeltaTime;
 	bulletTime += s_DeltaTime;
 
-	if (time > 1.0f)
+	if (m_TimeSinceLastShot > 2.0f)
 	{
 		if (s_biplaneRounds > 0)
 		{
@@ -123,7 +117,7 @@ bool Enemy::FireBiplane()
 		}
 		else
 		{
-			time = 0.0f;
+			m_TimeSinceLastShot = 0.0f;
 			s_biplaneRounds = 3;
 		}
 	}
@@ -133,12 +127,9 @@ bool Enemy::FireBiplane()
 
 bool Enemy::FireGunship()
 {
-	static float time = 0.0f;
-
-	time += s_DeltaTime;
-	if (time > s_gunshipFireRate)
+	if (m_TimeSinceLastShot > s_gunshipFireRate)
 	{
-		time = 0.0f;
+		m_TimeSinceLastShot = 0.0f;
 		return true;
 	}
 

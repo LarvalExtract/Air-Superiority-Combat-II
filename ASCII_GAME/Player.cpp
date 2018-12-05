@@ -29,3 +29,27 @@ void Player::Update(float deltaTime)
 	if (GetKeyState(VK_RIGHT) < 0)
 		m_Position.x += m_Speed * deltaTime;
 }
+
+bool Player::Fire()
+{
+	static bool bSpaceIsPressed = false;	// Prevents holding space to shoot
+
+	if (GetKeyState(VK_SPACE) < 0)
+	{
+		if (!bSpaceIsPressed)
+		{
+			if (m_TimeSinceLastShot > 0.15f)
+			{
+				m_TimeSinceLastShot = 0.0f;
+				bSpaceIsPressed = true;
+				return true;
+			}
+		}
+	}
+	else
+	{
+		bSpaceIsPressed = false;
+	}
+
+	return false;
+}

@@ -214,20 +214,11 @@ void Game::UpdatePlayer(float deltaTime)
 	else if (player.GetPosition().x > SCREEN_BOUNDARY_RIGHT)
 		player.SetPosition(SCREEN_BOUNDARY_RIGHT, player.GetPosition().y);
 
-	// Shoot projectile
-	static bool bSpaceIsPressed = false;
-	if (GetKeyState(VK_SPACE) < 0)
+	if (player.Fire())
 	{
-		if (!bSpaceIsPressed)
-		{
-			if (player.TimeSinceLastShot() > player.ShootCooldownTime())
-				player.Shoot(GetPlayerProjectile());
-			bSpaceIsPressed = true;
-		}
-	}
-	else
-	{
-		bSpaceIsPressed = false;
+		Projectile& proj = GetPlayerProjectile();
+		proj.SetPosition(player.GetPosition().x + player.GetSize().x, (player.GetPosition().y + (player.GetSize().y / 2)) - proj.GetSize().y / 2);
+		proj.SetFiringState(true);
 	}
 }
 
@@ -240,7 +231,7 @@ void Game::UpdateEnemies(float deltaTime)
 		{
 			pEnemies[i]->Update(deltaTime);
 
-			if (pEnemies[i]->FiredWeapon())
+			if (pEnemies[i]->Fire())
 			{
 				Projectile& enemyProjectile = GetEnemyProjectile();
 				enemyProjectile.SetFiringState(true);

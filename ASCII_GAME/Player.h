@@ -10,6 +10,8 @@ public:
 
 	void Update(float deltaTime);
 
+	bool Fire() override;
+
 	unsigned char GetLives() const { return m_Lives; }
 	unsigned int GetScore() const { return m_Score; }
 

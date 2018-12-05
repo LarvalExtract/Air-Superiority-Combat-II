@@ -17,13 +17,6 @@ void Plane::Update(float deltaTime)
 	m_HitTime += deltaTime;
 	m_TimeSinceLastShot += deltaTime;
 
-	if (m_HitTime > 0.1f)
+	if (m_HitTime > 0.05f)
 		ClearPixelOverrideColour();
-}
-
-void Plane::Shoot(Projectile& proj)
-{
-	proj.SetPosition(m_Position.x + m_Size.x, (m_Position.y + (m_Size.y >> 1)) - (proj.GetSize().y >> 1));
-	proj.SetFiringState(true);
-	m_TimeSinceLastShot = 0.0f;
 }

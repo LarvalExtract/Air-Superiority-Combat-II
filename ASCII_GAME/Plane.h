@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Projectile.h"
+#include "Core/Renderer/Sprite.h"
 
 class Plane : public Sprite
 {
@@ -9,8 +9,9 @@ public:
 
 	void Update(float deltaTime);
 
+	virtual bool Fire() = 0;
+
 	void ApplyDamage(unsigned char damage);
-	void Shoot(Projectile& proj);
 
 	bool IsDestroyed() const { return m_bDestroyed; }
 	void SetActive(bool value = true) { m_bDestroyed = !value; }
@@ -24,6 +25,7 @@ protected:
 	char m_Health;
 	float m_Speed;
 	float m_HitTime;
+
 	bool m_bDestroyed;
 	bool m_TookDamage;
 
