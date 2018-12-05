@@ -7,10 +7,12 @@ class SpriteCharacter : public Sprite
 {
 public:
 	SpriteCharacter(const std::string& path, unsigned char leading, unsigned char tracking, unsigned char kerning) :
-		Sprite(path.c_str()),
 		m_Lead(leading),
 		m_Track(tracking),
-		m_Kern(kerning) {}
+		m_Kern(kerning) 
+	{
+		SetImage(path.c_str());
+	}
 
 	void SetLeading(unsigned char lead) { m_Lead = lead; }
 	void SetTracking(unsigned char track) { m_Track = track; }

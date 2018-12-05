@@ -13,7 +13,8 @@ const int SCREEN_BOUNDARY_LEFT = 0;
 const int SCREEN_BOUNDARY_RIGHT = 100;
 
 const int MAX_PLAYER_PROJECTILES = 10;
-const int MAX_ENEMY_PROJECTILES = 50;
+const int MAX_ENEMY_PROJECTILES = 100;
+const int MAX_EXPLOSION_SPRITES = 50;
 
 #define VK_LEFT		0x25
 #define VK_RIGHT	0x27
@@ -28,12 +29,19 @@ Game::Game() :
 {
 	playerProjectiles.reserve(MAX_PLAYER_PROJECTILES);
 	enemyProjectiles.reserve(MAX_ENEMY_PROJECTILES);
+	m_Explosions.reserve(MAX_EXPLOSION_SPRITES);
 
 	for (int i = 0; i < MAX_PLAYER_PROJECTILES; i++)
 		playerProjectiles.emplace_back(PROJECTILE_PLAYER);
 
 	for (int i = 0; i < MAX_ENEMY_PROJECTILES; i++)
 		enemyProjectiles.emplace_back(PROJECTILE_ENEMY);
+
+	for (int i = 0; i < MAX_EXPLOSION_SPRITES; i++)
+	{
+		m_Explosions.emplace_back();
+		m_Explosions[i].SetSpriteSheet("../sprites/explosion.tga", 6);
+	}
 }
 
 Game::~Game()
@@ -51,16 +59,8 @@ void Game::Initialise()
 	
 	mainMenu.Initialise(SCREEN_WIDTH);
 
-	m_ScoreDisplay.Initialise();
-	m_ScoreDisplay.SetText("005070");
-	m_ScoreDisplay.SetPosition(5, 3);
-
-	animTest.SetSpriteSheet("../sprites/explosion.tga", 6);
-
-	pEnemies.push_back(new Enemy(ENEMY_LIGHT));
 	pEnemies.push_back(new Enemy(ENEMY_BIPLANE));
 	pEnemies.push_back(new Enemy(ENEMY_MEDIUM));
-	pEnemies.push_back(new Enemy(ENEMY_HEAVY));
 	pEnemies.push_back(new Enemy(ENEMY_GUNSHIP));
 
 	player.SetPosition(0, SCREEN_HEIGHT / 2 - player.GetSize().y / 2);
@@ -68,8 +68,6 @@ void Game::Initialise()
 	pEnemies[0]->SetPosition(SCREEN_WIDTH, 40);
 	pEnemies[1]->SetPosition(SCREEN_WIDTH, 60);
 	pEnemies[2]->SetPosition(SCREEN_WIDTH, 80);
-	pEnemies[3]->SetPosition(SCREEN_WIDTH, 100);
-	pEnemies[4]->SetPosition(SCREEN_WIDTH, 120);
 
 	m_bInitialised = true;
 }
@@ -124,8 +122,6 @@ void Game::Render()
 	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
 	}
 
-	animTest.Render(m_pRenderer, 3);
-
 	//call this last
 	m_pRenderer->Render();
 }
@@ -167,14 +163,14 @@ void Game::UpdateMainMenu()
 void Game::UpdateGame(float deltaTime)
 {
 	UpdatePlayer(deltaTime);
+	UpdateEnemies(deltaTime);
 
 	UpdatePlayerProjectiles(deltaTime);
 	UpdateEnemyProjectiles(deltaTime);
 
-	for (int i = 0; i < pEnemies.size(); i++)
-		if (!pEnemies[i]->IsDestroyed())
-			pEnemies[i]->Update(deltaTime);
-
+	for (SpriteAnimation& explosion : m_Explosions)
+		if (explosion.Active())
+			explosion.Update(deltaTime);
 }
 
 void Game::RenderGame()
@@ -188,19 +184,35 @@ void Game::RenderGame()
 
 	RenderProjectiles();
 
-	m_ScoreDisplay.Render(m_pRenderer);
+	RenderExplosions();
+}
+
+void Game::RenderExplosions()
+{
+	for (SpriteAnimation& explosion : m_Explosions)
+		if (explosion.Active())
+			explosion.Render(m_pRenderer);
 }
 
 void Game::UpdatePlayer(float deltaTime)
 {
 	player.Update(deltaTime);
 
-	// Prevent player from going above or below the screen
+	// Prevent player from going above the screen
 	if (player.GetPosition().y < SCREEN_BOUNDARY_TOP)
 		player.SetPosition(player.GetPosition().x, SCREEN_BOUNDARY_TOP);
 
+	// Prevent player from going below screen
 	else if (player.GetPosition().y + player.GetSize().y > SCREEN_HEIGHT)
 		player.SetPosition(player.GetPosition().x, SCREEN_HEIGHT - player.GetSize().y);
+
+	// Prevent player from going left of screen
+	if (player.GetPosition().x < 0)
+		player.SetPosition(0, player.GetPosition().y);
+
+	// Prevent player from going too far right
+	else if (player.GetPosition().x > SCREEN_BOUNDARY_RIGHT)
+		player.SetPosition(SCREEN_BOUNDARY_RIGHT, player.GetPosition().y);
 
 	// Shoot projectile
 	static bool bSpaceIsPressed = false;
@@ -216,6 +228,35 @@ void Game::UpdatePlayer(float deltaTime)
 	else
 	{
 		bSpaceIsPressed = false;
+	}
+}
+
+void Game::UpdateEnemies(float deltaTime)
+{
+	for (int i = 0; i < pEnemies.size(); i++)
+	{
+		// Enemy is alive on screen
+		if (!pEnemies[i]->IsDestroyed())
+		{
+			pEnemies[i]->Update(deltaTime);
+
+			if (pEnemies[i]->FiredWeapon())
+			{
+				Projectile& enemyProjectile = GetEnemyProjectile();
+				enemyProjectile.SetFiringState(true);
+				enemyProjectile.SetPosition(pEnemies[i]->GetPosition().x, pEnemies[i]->GetPosition().y + (pEnemies[i]->GetSize().y / 2));
+			}
+		}
+		// Enemy is ready to be spawned
+		else
+		{
+			if (Random(1, 100) < 3)
+			{
+				pEnemies[i]->SetPosition(SCREEN_WIDTH, Random(SCREEN_BOUNDARY_TOP, SCREEN_HEIGHT - pEnemies[i]->GetSize().y));
+				pEnemies[i]->ResetHealth();
+				pEnemies[i]->SetActive();
+			}
+		}
 	}
 }
 
@@ -244,7 +285,10 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 						pEnemies[j]->ApplyDamage(projectile.GetDamage());
 
 						if (pEnemies[j]->IsDestroyed())
+						{
 							player.AddScore(pEnemies[j]->GetPoints());
+							SetExplosion(*pEnemies[j]);
+						}
 
 						projectile.SetFiringState(false);
 
@@ -264,6 +308,7 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 		{
 			projectile.Update(deltaTime);
 
+			// Disable current projectile if it has gone off screen, and skip to the next projectile
 			if (projectile.GetPosition().x + projectile.GetSize().x < 0)
 			{
 				projectile.SetFiringState(false);
@@ -272,7 +317,7 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 
 			if (projectile.Collides(player))
 			{
-				player.DecrementLives();
+				player.ApplyDamage(1);
 
 				projectile.SetFiringState(false);
 			}
@@ -311,4 +356,18 @@ Projectile& Game::GetPlayerProjectile()
 Projectile& Game::GetEnemyProjectile()
 {
 	return GetProjectile(enemyProjectiles, PROJECTILE_ENEMY);
+}
+
+void Game::SetExplosion(Plane& plane)
+{
+	for (SpriteAnimation& explosion : m_Explosions)
+	{
+		if (!explosion.Active())
+		{
+			explosion.SetPosition(plane.GetPosition().x + (plane.GetSize().x / 2) - (explosion.GetSize().x / 2), plane.GetPosition().y);
+			explosion.SetFrame(0);
+			explosion.SetActive(true);
+			break;
+		}
+	}
 }

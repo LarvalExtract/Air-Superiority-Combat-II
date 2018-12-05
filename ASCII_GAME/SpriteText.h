@@ -19,8 +19,7 @@ public:
 	void Render(ASCIIRenderer* pRenderer);
 
 private:
-	static std::map<char, SpriteCharacter*> m_Characters;
-
+	static std::map<char, SpriteCharacter*> characters;
 	std::vector<SpriteCharacter> m_Sprites;
 	Vec2<int> m_Position;
 };

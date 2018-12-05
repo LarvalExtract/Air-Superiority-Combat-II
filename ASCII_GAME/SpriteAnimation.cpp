@@ -6,7 +6,11 @@
 SpriteAnimation::SpriteAnimation() :
 	m_Frames(nullptr),
 	m_FrameTime(0.0f),
-	m_FrameCount(0)
+	m_FrameCount(0),
+	m_CurrentFrame(0),
+	m_bActive(false),
+	m_Position(0, 0),
+	m_Size(0, 0)
 {
 
 }
@@ -25,24 +29,23 @@ void SpriteAnimation::SetSpriteSheet(const char* tgaFilePath, int frameCount)
 	m_FrameCount = frameCount;
 	m_Frames = new Sprite[m_FrameCount];
 
-	Vec2<int> size;
-	size.x = file.Width() / frameCount;
-	size.y = file.Height();
+	m_Size.x = file.Width() / frameCount;
+	m_Size.y = file.Height();
 
-	int rowLength = size.x * sizeof(unsigned int);
-	int frameSize = rowLength * size.y;
+	int rowLength = m_Size.x * sizeof(unsigned int);
+	int frameSize = rowLength * m_Size.y;
 
-	unsigned int* buffer = new unsigned int[size.x * size.y];
+	unsigned int* buffer = new unsigned int[m_Size.x * m_Size.y];
 	unsigned int* tgaPixels = file.Pixels();
 
 	for (int i = 0; i < m_FrameCount; i++)
 	{
-		for (int row = 0; row < size.y; row++)
+		for (int row = 0; row < m_Size.y; row++)
 		{
-			std::memcpy(&buffer[row * size.x], &tgaPixels[(i * size.x) + (row * size.x * m_FrameCount)], rowLength);
+			std::memcpy(&buffer[row * m_Size.x], &tgaPixels[(i * m_Size.x) + (row * m_Size.x * m_FrameCount)], rowLength);
 		}
 
-		m_Frames[i].Initialise(buffer, size);
+		m_Frames[i].Initialise(buffer, m_Size);
 	}
 
 	delete[] buffer;
@@ -50,16 +53,38 @@ void SpriteAnimation::SetSpriteSheet(const char* tgaFilePath, int frameCount)
 
 void SpriteAnimation::SetPosition(float x, float y)
 {
+	m_Position.x = x;
+	m_Position.y = y;
+
 	if (m_Frames)
 	{
 		for (int i = 0; i < m_FrameCount; i++)
-			m_Frames[i].SetPosition(x, y);
+			m_Frames[i].SetPosition(m_Position);
 	}
 }
 
-void SpriteAnimation::Render(ASCIIRenderer *pRenderer, int frame)
+void SpriteAnimation::Update(float deltaTime)
 {
-	if (frame >= 0 && frame <= m_FrameCount)
+	static float time = 0.0f;
+
+	time += deltaTime;
+
+	if (time > 0.05f)
+	{
+		m_CurrentFrame++;
+		time = 0.0f;
+	}
+
+	if (m_CurrentFrame == m_FrameCount)
+	{
+		m_CurrentFrame = 0;
+		m_bActive = false;
+	}
+}
+
+void SpriteAnimation::Render(ASCIIRenderer *pRenderer)
+{
+	if (m_CurrentFrame >= 0 && m_CurrentFrame <= m_FrameCount)
 		if (m_Frames)
-			m_Frames[frame].Render(pRenderer);
+			m_Frames[m_CurrentFrame].Render(pRenderer);
 }

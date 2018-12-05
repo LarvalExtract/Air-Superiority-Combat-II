@@ -39,7 +39,7 @@ void ASCIIRenderer::InitialisePixelSize()
 	GetCurrentConsoleFontEx(m_hConsole, false, font_size);
 
 	font_size->dwFontSize.X = 1;	//Width of element in buffer
-	font_size->dwFontSize.Y = 2;	//Hieght of element in buffer
+	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
 
 	m_ScreenSize = SCREENSIZE_SMALL;
 

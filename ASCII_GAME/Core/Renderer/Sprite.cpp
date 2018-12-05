@@ -23,6 +23,19 @@ Sprite::Sprite() :
 {
 }
 
+Sprite::Sprite(const Sprite& other)
+{
+	m_Position = other.m_Position;
+	m_Size = other.m_Size;
+	m_bInitialised = other.m_bInitialised;
+	m_PixelOverride = other.m_PixelOverride;
+
+	SAFE_DELETE_ARY(m_PixelData);
+
+	m_PixelData = new CONSOLE_PIXEL[m_Size.x * m_Size.y];
+	std::memcpy(&m_PixelData[0], &other.m_PixelData[0], m_Size.x * m_Size.y);
+}
+
 Sprite::Sprite(const char* bmpFile) :
 	m_PixelData(nullptr),
 	m_bInitialised(false),

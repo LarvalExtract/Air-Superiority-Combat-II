@@ -3,8 +3,8 @@
 
 #include <cstdlib>
 
-#define SAFE_DELETE_PTR(ptr){ if(ptr){ delete ptr; ptr = NULL; } }
-#define SAFE_DELETE_ARY(ptr){ if(ptr){ delete[] ptr; ptr = NULL; } }
+#define SAFE_DELETE_PTR(ptr){ if(ptr){ delete ptr; ptr = nullptr; } }
+#define SAFE_DELETE_ARY(ptr){ if(ptr){ delete[] ptr; ptr = nullptr; } }
 
 inline unsigned int Random(int min, int max)
 {

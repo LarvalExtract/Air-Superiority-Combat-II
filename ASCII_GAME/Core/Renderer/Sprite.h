@@ -20,6 +20,7 @@ class Sprite
 public:
 
 	Sprite();
+	Sprite(const Sprite& other);
 	Sprite(const char* bmpFile);
 	~Sprite();
 

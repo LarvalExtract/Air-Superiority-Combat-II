@@ -1,14 +1,14 @@
 #include "Plane.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
-void Plane::ApplyDamage(float damage)
+void Plane::ApplyDamage(unsigned char damage)
 {
 	m_Health -= damage;
 	m_HitTime = 0.0f;
 
 	SetPixelOverrideColour(ConsoleColour::BACKGROUND_BRIGHT_RED);
 
-	if (m_Health <= 0.0f)
+	if (m_Health <= 0)
 		m_bDestroyed = true;
 }
 

@@ -24,7 +24,7 @@ public:
 	void Render(ASCIIRenderer* pRenderer);
 
 private:
-	std::vector<BackgroundItem> clouds;
+	std::vector<BackgroundItem> m_BackroundItems;
 
 	Vec2<int> m_Boundary;
 };

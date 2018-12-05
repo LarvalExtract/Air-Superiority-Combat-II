@@ -10,7 +10,7 @@ Player::Player() :
 	SetImage("player.tga");
 	m_Health = 10.0f;
 	m_Speed = 150.0f;
-	m_ShootCooldown = 0.1f;
+	m_ShootCooldown = 0.15f;
 }
 
 void Player::Update(float deltaTime)
@@ -22,4 +22,10 @@ void Player::Update(float deltaTime)
 
 	if (GetKeyState(VK_UP) < 0)
 		m_Position.y -= m_Speed * deltaTime;
+
+	if (GetKeyState(VK_LEFT) < 0)
+		m_Position.x -= m_Speed * deltaTime;
+
+	if (GetKeyState(VK_RIGHT) < 0)
+		m_Position.x += m_Speed * deltaTime;
 }

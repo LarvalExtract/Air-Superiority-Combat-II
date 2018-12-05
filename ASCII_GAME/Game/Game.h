@@ -25,20 +25,28 @@ public:
 	void Run();
 
 private:
+	bool m_bInitialised;
+	bool m_bExitApp;
 
 	//Functions
 	void InitialiseRenderer();
 	void Update(float deltaTime);
 	void Render();
 
+	// Update functions
 	void UpdateMainMenu();
 	void UpdateGame(float deltaTime);
 	void UpdatePlayer(float deltaTime);
+	void UpdateEnemies(float deltaTime);
 	void UpdatePlayerProjectiles(float deltaTime);
 	void UpdateEnemyProjectiles(float deltaTime);
 
+	// Render functions
 	void RenderGame();
 	void RenderProjectiles();
+	void RenderExplosions();
+
+	void SetExplosion(Plane& plane);
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
@@ -46,6 +54,7 @@ private:
 
 	std::vector<Projectile> playerProjectiles;
 	std::vector<Projectile> enemyProjectiles;
+	std::vector<SpriteAnimation> m_Explosions;
 
 	Projectile& GetPlayerProjectile();
 	Projectile& GetEnemyProjectile();
@@ -54,16 +63,13 @@ private:
 	Player player;
 	std::vector<Enemy*> pEnemies;
 
-	bool m_bInitialised;
-	bool m_bExitApp;
+	
 
 	Timer<float> gameTimer;
 
 	E_GAME_STATE m_GameState;
 
 	MainMenu mainMenu;
-	SpriteText m_ScoreDisplay;
-	SpriteAnimation animTest;
 };
 
 

@@ -20,10 +20,10 @@ public:
 
 	bool IsFiring() const { return m_bIsFiring; }
 
-	float GetDamage() const { return m_Damage; }
+	unsigned char GetDamage() const { return m_Damage; }
 
 private:
-	float m_Damage;
+	unsigned char m_Damage;
 	float m_ProjectileSpeed;
 	bool m_bIsFiring;
 };

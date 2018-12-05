@@ -4,26 +4,37 @@
 
 enum EnemyType
 {
-	ENEMY_LIGHT,
 	ENEMY_BIPLANE,
 	ENEMY_MEDIUM,
-	ENEMY_HEAVY,
 	ENEMY_GUNSHIP
 };
 
 class Enemy : public Plane
 {
 public:
-	Enemy(EnemyType type = ENEMY_HEAVY);
+	Enemy(EnemyType type);
 	~Enemy();
 
 	void Update(float deltaTime);
+	bool FiredWeapon();
 
-	void UpdateBiplane(float deltaTime);
+	void ResetHealth();
 
 	unsigned int GetPoints() const { return m_Points; }
 
 private:
+	void UpdateBiplane(float deltaTime);
+
+	bool FireMedium();
+	bool FireBiplane();
+	bool FireGunship();
+
 	unsigned int m_Points;
 	EnemyType type;
+
+	static float s_DeltaTime;
+
+	static char s_biplaneRounds;
+	static char s_mediumFireChance;
+	static float s_gunshipFireRate;
 };
