@@ -1,5 +1,5 @@
 #include "SpriteAnimation.h"
-#include "TGAFile.h"
+#include "Core/TGAFile.h"
 #include "Core/Utils.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
@@ -13,7 +13,7 @@ SpriteAnimation::SpriteAnimation() :
 
 SpriteAnimation::SpriteAnimation(const TextureArray &textureArray) :
 	m_TextureArray(textureArray),
-	m_FrameTime(0.05f),
+	m_FrameTime(0.0f),
 	m_CurrentFrame(0),
 	m_LoopCount(0)
 {

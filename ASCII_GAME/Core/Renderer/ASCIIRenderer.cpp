@@ -1,5 +1,5 @@
 #include "ASCIIRenderer.h"
-#include "../Utils.h"
+#include "Core/Utils.h"
 
 ASCIIRenderer::ASCIIRenderer() :
 	m_ScreenData(NULL),
@@ -33,22 +33,20 @@ void ASCIIRenderer::Initialise(int width, int height)
 void ASCIIRenderer::InitialisePixelSize()
 {
 	//---Set up font size to look like pixel---
-	font_size = new CONSOLE_FONT_INFOEX();
+	font_size.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+	GetCurrentConsoleFontEx(m_hConsole, false, &font_size);
 
-	font_size->cbSize = sizeof(CONSOLE_FONT_INFOEX);
-	GetCurrentConsoleFontEx(m_hConsole, false, font_size);
+	font_size.dwFontSize.X = 1;	//Width of element in buffer
+	font_size.dwFontSize.Y = 4;	//Hieght of element in buffer
 
-	font_size->dwFontSize.X = 1;	//Width of element in buffer
-	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
-
-	SetCurrentConsoleFontEx(m_hConsole, false, font_size);	//Set the new font size
+	SetCurrentConsoleFontEx(m_hConsole, false, &font_size);	//Set the new font size
 }
 
 void ASCIIRenderer::TogglePixelSize()
 {
-	font_size->dwFontSize.Y == 2 ? font_size->dwFontSize.Y = 4 : font_size->dwFontSize.Y = 2;
+	font_size.dwFontSize.Y == 2 ? font_size.dwFontSize.Y = 4 : font_size.dwFontSize.Y = 2;
 
-	SetCurrentConsoleFontEx(m_hConsole, false, font_size);
+	SetCurrentConsoleFontEx(m_hConsole, false, &font_size);
 }
 
 void ASCIIRenderer::SetWindow(int Width, int Height)

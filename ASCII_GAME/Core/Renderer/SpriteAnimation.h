@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Renderer/Sprite.h"
-#include "TextureArray.h"
+#include "Core/TextureArray.h"
 
 class SpriteAnimation : public Sprite
 {

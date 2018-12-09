@@ -1,8 +1,8 @@
 ﻿#include "Game.h"
 #include <windows.h>
 
-#include "../Core/Utils.h"
-#include "../Core/Renderer/ASCIIRenderer.h"
+#include "Core/Utils.h"
+#include "Core/Renderer/ASCIIRenderer.h"
 
 constexpr int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
 constexpr int HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;

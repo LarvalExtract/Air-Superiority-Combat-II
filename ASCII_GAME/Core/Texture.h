@@ -2,8 +2,8 @@
 
 #include <Windows.h>
 
-#include "Vec2.h"
-#include "TGAFile.h"
+#include "Core/Maths/Vec2.h"
+#include "Core/TGAFile.h"
 
 struct CONSOLE_PIXEL
 {

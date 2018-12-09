@@ -2,16 +2,16 @@
 #define _GAME_H
 
 #include "GameStates.h"
-#include "../Player.h"
-#include "../Enemy.h"
-#include "../Projectile.h"
-#include "../Background.h"
-#include "../MainMenu.h"
-#include "../SpriteText.h"
-#include "../SpriteAnimation.h"
-#include <vector>
+#include "GameObjects/Player.h"
+#include "GameObjects/Enemy.h"
+#include "GameObjects/Projectile.h"
+#include "GameObjects/Background.h"
+#include "GameObjects/Menu.h"
+#include "Core/Renderer/SpriteText.h"
+#include "Core/Renderer/SpriteAnimation.h"
+#include "Core/Timer.h"
 
-#include "../Timer.h"
+#include <vector>
 
 class ASCIIRenderer;
 

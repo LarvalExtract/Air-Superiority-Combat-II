@@ -2,7 +2,7 @@
 #define _SPRITE_H_
 
 #include "ConsoleColours.h"
-#include "../../Texture.h"
+#include "Core/Texture.h"
 
 class ASCIIRenderer;
 

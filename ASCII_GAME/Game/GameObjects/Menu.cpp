@@ -1,4 +1,4 @@
-#include "MainMenu.h"
+#include "Menu.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
 #include <Windows.h>

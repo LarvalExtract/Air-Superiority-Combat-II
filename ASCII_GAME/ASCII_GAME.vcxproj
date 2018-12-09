@@ -39,7 +39,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -67,46 +69,46 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Game\GameObjects\Background.cpp" />
     <ClCompile Include="Core\Maths\Vector2.cpp" />
     <ClCompile Include="Core\Maths\Vector3.cpp" />
     <ClCompile Include="Core\Renderer\ASCIIRenderer.cpp" />
     <ClCompile Include="Core\Renderer\Sprite.cpp" />
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Game\GameObjects\Enemy.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="SpriteAnimation.cpp" />
-    <ClCompile Include="SpriteText.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureArray.cpp" />
-    <ClCompile Include="TGAFile.cpp" />
+    <ClCompile Include="Game\GameObjects\Menu.cpp" />
+    <ClCompile Include="Game\GameObjects\Player.cpp" />
+    <ClCompile Include="Game\GameObjects\Projectile.cpp" />
+    <ClCompile Include="Game\GameObjects\Plane.cpp" />
+    <ClCompile Include="Core\Renderer\SpriteAnimation.cpp" />
+    <ClCompile Include="Core\Renderer\SpriteText.cpp" />
+    <ClCompile Include="Core\Texture.cpp" />
+    <ClCompile Include="Core\TextureArray.cpp" />
+    <ClCompile Include="Core\TGAFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Background.h" />
+    <ClInclude Include="Game\GameObjects\Background.h" />
     <ClInclude Include="Core\Maths\Vector2.h" />
     <ClInclude Include="Core\Maths\Vector3.h" />
     <ClInclude Include="Core\Renderer\ASCIIRenderer.h" />
     <ClInclude Include="Core\Renderer\ConsoleColours.h" />
     <ClInclude Include="Core\Renderer\Sprite.h" />
     <ClInclude Include="Core\Utils.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Game\GameObjects\Enemy.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameStates.h" />
-    <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Plane.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Projectile.h" />
-    <ClInclude Include="SpriteAnimation.h" />
-    <ClInclude Include="SpriteText.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureArray.h" />
-    <ClInclude Include="TGAFile.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Vec2.h" />
+    <ClInclude Include="Game\GameObjects\Menu.h" />
+    <ClInclude Include="Game\GameObjects\Plane.h" />
+    <ClInclude Include="Game\GameObjects\Player.h" />
+    <ClInclude Include="Game\GameObjects\Projectile.h" />
+    <ClInclude Include="Core\Renderer\SpriteAnimation.h" />
+    <ClInclude Include="Core\Renderer\SpriteText.h" />
+    <ClInclude Include="Core\Texture.h" />
+    <ClInclude Include="Core\TextureArray.h" />
+    <ClInclude Include="Core\TGAFile.h" />
+    <ClInclude Include="Core\Timer.h" />
+    <ClInclude Include="Core\Maths\Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

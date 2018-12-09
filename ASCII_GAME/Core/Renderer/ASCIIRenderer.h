@@ -30,7 +30,7 @@ private:
 	short m_Width;
 	short m_Height;
 	ConsoleColour m_BackgroundColour;
-	PCONSOLE_FONT_INFOEX font_size;
+	CONSOLE_FONT_INFOEX font_size;
 
 	bool m_bInitialised;
 };
