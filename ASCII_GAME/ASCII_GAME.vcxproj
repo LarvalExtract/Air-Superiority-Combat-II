@@ -82,6 +82,7 @@
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="SpriteText.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureArray.cpp" />
     <ClCompile Include="TGAFile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +103,7 @@
     <ClInclude Include="SpriteAnimation.h" />
     <ClInclude Include="SpriteText.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureArray.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vec2.h" />

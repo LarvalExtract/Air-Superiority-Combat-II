@@ -47,6 +47,9 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Core\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Core\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -124,6 +127,9 @@
       <Filter>Core\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
+      <Filter>Core\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

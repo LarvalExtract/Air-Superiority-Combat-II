@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Core/Utils.h"
+#include "Projectile.h"
 
 float Enemy::s_DeltaTime = 0.0f;
 
@@ -7,12 +8,12 @@ char	Enemy::s_biplaneRounds = 3;
 char	Enemy::s_mediumFireChance = 10;
 float	Enemy::s_gunshipFireRate = 3.0f;
 
-Texture s_spitfireTexture(TGAFile("enemy2.tga"));
-Texture s_biplaneTexture(TGAFile("enemy3.tga"));
+Texture s_spitfireTexture(TGAFile("enemy3.tga"));
+Texture s_biplaneTexture(TGAFile("enemy2.tga"));
 Texture s_gunshipTexture(TGAFile("enemy5.tga"));
 
 Enemy::Enemy(EnemyType type) :
-	type(type)
+	m_Type(type)
 {
 	switch (type)
 	{
@@ -48,7 +49,7 @@ Enemy::~Enemy()
 
 void Enemy::ResetHealth()
 {
-	switch (type)
+	switch (m_Type)
 	{
 	case ENEMY_SPITFIRE: m_Health = 5; break;
 	case ENEMY_BIPLANE: m_Health = 4; break;
@@ -62,7 +63,7 @@ void Enemy::Update(float deltaTime)
 
 	Enemy::s_DeltaTime = deltaTime;
 
-	switch (type)
+	switch (m_Type)
 	{
 	case ENEMY_SPITFIRE:	break;
 	case ENEMY_BIPLANE:		UpdateBiplane(deltaTime); break;
@@ -74,16 +75,38 @@ void Enemy::Update(float deltaTime)
 
 bool Enemy::Fire()
 {
-	switch (type)
+	switch (m_Type)
 	{
-	case ENEMY_SPITFIRE:	return FireMedium();
+	case ENEMY_SPITFIRE:	return FireSpitfire();
 	case ENEMY_BIPLANE:		return FireBiplane();
 	case ENEMY_GUNSHIP:		return FireGunship();
 	default:				return false;
 	}
 }
 
-bool Enemy::FireMedium()
+void Enemy::SetProjectile(Projectile &proj)
+{
+	switch (m_Type)
+	{
+	case ENEMY_SPITFIRE:	
+		proj.SetTexture(Projectile::s_enemyProjectile1);
+		proj.SetVelocity(Vec2<float>(-150.0f, 0.0f));
+		break;
+	case ENEMY_BIPLANE:		
+		proj.SetTexture(Projectile::s_enemyProjectile2);
+		proj.SetVelocity(Vec2<float>(-170.0f, 0.0f));
+		break;
+	case ENEMY_GUNSHIP:		
+		proj.SetTexture(Projectile::s_enemyProjectile2);
+		proj.SetVelocity(Vec2<float>(-125.0f, 0.0f));
+		break;
+	}
+
+	proj.SetPosition(m_Position.x, m_Position.y + (proj.GetSize().y / 2));
+	proj.SetFiringState(true);
+}
+
+bool Enemy::FireSpitfire()
 {
 	if (m_TimeSinceLastShot > 0.5f)
 	{

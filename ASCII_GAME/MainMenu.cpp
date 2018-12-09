@@ -33,7 +33,7 @@ void Menu::AddMenuItem(const Texture &texture)
 	m_MenuSprites.push_back(Sprite());
 	m_MenuSprites.back().SetTexture(texture);
 
-	m_IndexRange.y++;
+	m_IndexRange.y = m_MenuSprites.size() - 1;
 
 	UpdateItemPositions();
 	UpdateMaxSize();
@@ -41,8 +41,6 @@ void Menu::AddMenuItem(const Texture &texture)
 
 void Menu::AlignVertical()
 {
-	//int halfWidth = m_Size.x / 2;	
-
 	for (int i = 0; i < m_MenuSprites.size(); i++)
 	{
 		m_MenuSprites[i].SetPosition(m_MenuSprites[i].GetPosition().x - m_MenuSprites[i].GetSize().x / 2, m_MenuSprites[i].GetPosition().y);
@@ -51,36 +49,46 @@ void Menu::AlignVertical()
 
 void Menu::IncrementMenuIndex()
 {
-	m_MenuSprites[m_MenuIndex].ClearPixelOverrideColour();
-
-	m_MenuIndex++;
-
-	if (m_MenuIndex > m_IndexRange.y)
-		m_MenuIndex = m_IndexRange.y;
-
-	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
+	SetSelectionIndex(m_MenuIndex + 1);
 }
 
 void Menu::DecrementMenuIndex()
 {
+	SetSelectionIndex(m_MenuIndex - 1);
+}
+
+void Menu::SetSelectionIndex(unsigned char newIndex)
+{
+	// Restore colour of previously selected menu item
 	m_MenuSprites[m_MenuIndex].ClearPixelOverrideColour();
 
-	m_MenuIndex--;
-
-	if (m_MenuIndex < m_IndexRange.x)
+	if (newIndex < m_IndexRange.x)
 		m_MenuIndex = m_IndexRange.x;
+	else if (newIndex > m_IndexRange.y)
+		m_MenuIndex = m_IndexRange.y;
+	else
+		m_MenuIndex = newIndex;
 
+	// Highlight newly selected menu item
 	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
 }
 
-void Menu::SetSelectionIndex(unsigned char index)
+void Menu::SetMinimumIndex(unsigned char index)
 {
-	if (index >= m_IndexRange.x && index <= m_IndexRange.y)
-		m_MenuIndex = index;
-	else
-		m_MenuIndex = 0;
+	if (index > m_MenuSprites.size())
+		return;
 
-	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
+	m_IndexRange.x = index;
+	SetSelectionIndex(index);
+}
+
+void Menu::SetMaximumIndex(unsigned char index)
+{
+	if (index > m_MenuSprites.size())
+		return;
+
+	m_IndexRange.y = index;
+	SetSelectionIndex(index);
 }
 
 void Menu::Render(ASCIIRenderer* pRenderer)

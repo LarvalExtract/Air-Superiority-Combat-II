@@ -9,7 +9,6 @@
 #include "../MainMenu.h"
 #include "../SpriteText.h"
 #include "../SpriteAnimation.h"
-#include "GameObjects/ScoreDisplay.h"
 #include <vector>
 
 #include "../Timer.h"
@@ -27,6 +26,9 @@ enum E_KEYS
 	KEY_RETURN
 };
 
+constexpr int SCREEN_WIDTH = 600;
+constexpr int SCREEN_HEIGHT = 200;
+
 class Game
 {
 public:
@@ -41,19 +43,31 @@ private:
 	bool m_bExitApp;
 
 	//Functions
-	void InitialiseRenderer();
+	void InitialiseGame();
 	void Update(float deltaTime);
 	void Render();
 
-	bool OnKeyPressed(int keycode);
-
 	// Update functions
+
+	// Handle player input in main menu
 	void UpdateMainMenu();
+
+	// Handle player input in pause menu
 	void UpdatePauseMenu();
+
+	// Update game's state
 	void UpdateGame(float deltaTime);
+
+	// Update player's state
 	void UpdatePlayer(float deltaTime);
+
+	// Update state of all enemies on screen
 	void UpdateEnemies(float deltaTime);
+
+	// Update state of all player projectiles on screen
 	void UpdatePlayerProjectiles(float deltaTime);
+
+	// Update state of all enemy projectiles on screen
 	void UpdateEnemyProjectiles(float deltaTime);
 
 	// Render functions
@@ -61,7 +75,7 @@ private:
 	void RenderProjectiles();
 	void RenderExplosions();
 
-	void SetExplosion(Plane& plane);
+	bool OnKeyPressed(int keycode);
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
@@ -71,14 +85,17 @@ private:
 	std::vector<Projectile> enemyProjectiles;
 	std::vector<SpriteAnimation> m_Explosions;
 
+	// Returns the first inactive player projectile
 	Projectile& GetPlayerProjectile();
+
+	// Returns the first inactive enemy projectile
 	Projectile& GetEnemyProjectile();
-	Projectile& GetProjectile(std::vector<Projectile>& array, ProjectileType type);
 
 	Player player;
 	std::vector<Enemy> enemies;
 
 	Timer<float> gameTimer;
+	Timer<float> roundTimer;
 
 	E_GAME_STATE m_GameState;
 
@@ -86,6 +103,8 @@ private:
 	Menu pauseMenu;
 
 	SpriteText scoreDisplay;
+	Sprite* m_PlayerLifeIcons;
+	SpriteAnimation explosionSprite;
 
 	static bool m_Keys[7];
 };

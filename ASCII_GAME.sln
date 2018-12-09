@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ASCII_GAME", "ASCII_GAME\ASCII_GAME.vcxproj", "{CC3A4598-50CB-4AB8-9342-80ABA43869CB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleColourTest", "ConsoleColourTest\ConsoleColourTest.vcxproj", "{0B651461-069C-4A75-BCCA-44BFF83EFCF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,14 +19,6 @@ Global
 		{CC3A4598-50CB-4AB8-9342-80ABA43869CB}.Release|Win32.ActiveCfg = Release|Win32
 		{CC3A4598-50CB-4AB8-9342-80ABA43869CB}.Release|Win32.Build.0 = Release|Win32
 		{CC3A4598-50CB-4AB8-9342-80ABA43869CB}.Release|x64.ActiveCfg = Release|Win32
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Debug|Win32.Build.0 = Debug|Win32
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Debug|x64.ActiveCfg = Debug|x64
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Debug|x64.Build.0 = Debug|x64
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Release|Win32.ActiveCfg = Release|Win32
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Release|Win32.Build.0 = Release|Win32
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Release|x64.ActiveCfg = Release|x64
-		{0B651461-069C-4A75-BCCA-44BFF83EFCF8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

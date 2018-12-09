@@ -14,11 +14,14 @@ public:
 
 	unsigned char GetLives() const { return m_Lives; }
 	unsigned int GetScore() const { return m_Score; }
+	unsigned char GetMaxLives() const { return m_MaxLives; }
 
-	void SetLives(unsigned char lives) { m_Lives = lives; }
+	void SetLives(unsigned char lives);
+	void SetMaxLives(unsigned char maxLives) { m_MaxLives = maxLives; }
+	void SetScore(unsigned int score);
 
-	void IncrementLives() { m_Lives++; }
-	void DecrementLives() { m_Lives--; }
+	void IncrementLives();
+	void DecrementLives();
 
 	void MoveUp(float deltaTime) { m_Position.y -= m_Speed * deltaTime; }
 	void MoveDown(float deltaTime) { m_Position.y += m_Speed * deltaTime; }
@@ -28,6 +31,7 @@ public:
 	void AddScore(unsigned int score) { m_Score += score; }
 
 private:
-	unsigned char m_Lives;
+	char m_Lives;
 	unsigned int m_Score;
+	unsigned char m_MaxLives;
 };

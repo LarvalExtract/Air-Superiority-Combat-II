@@ -29,8 +29,8 @@ public:
 
 	void SetSelectionIndex(unsigned char index);
 
-	void SetMinimumIndex(unsigned char index) { m_IndexRange.x = index; }
-	void SetMaximumIndex(unsigned char index) { m_IndexRange.y = index; }
+	void SetMinimumIndex(unsigned char index);
+	void SetMaximumIndex(unsigned char index);
 
 private:
 	std::vector<Sprite> m_MenuSprites;

@@ -4,13 +4,41 @@
 #include <Windows.h>
 
 Player::Player() :
-	m_Lives(3),
-	m_Score(0)
+	m_Lives(0),
+	m_Score(0),
+	m_MaxLives(3)
 {
 	SetTexture(TGAFile("player.tga"));
 	m_Health = 10.0f;
 	m_Speed = 150.0f;
 	m_ShootCooldown = 0.15f;
+}
+
+void Player::SetLives(unsigned char lives)
+{
+	if (lives >= 0 && lives <= m_MaxLives)
+		m_Lives = lives;
+}
+
+void Player::SetScore(unsigned int score)
+{
+	m_Score = score;
+}
+
+void Player::IncrementLives()
+{
+	m_Lives++;
+
+	if (m_Lives > m_MaxLives)
+		m_Lives = m_MaxLives;
+}
+
+void Player::DecrementLives()
+{
+	m_Lives--;
+
+	if (m_Lives < 0)
+		m_Lives = 0;
 }
 
 void Player::Update(float deltaTime)

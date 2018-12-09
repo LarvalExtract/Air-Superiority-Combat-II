@@ -2,10 +2,6 @@
 #include "Core/Utils.h"
 #include "Core/Renderer/ConsoleColours.h"
 
-// Function overloads
-void ConvertPixels(unsigned int*, CONSOLE_PIXEL* &, Vec2<short>);
-CONSOLE_PIXEL SamplePixel(unsigned int);
-
 Texture::Texture(const TGAFile &tgaFile) :
 	m_pixelData(nullptr),
 	m_size(0, 0)
@@ -26,10 +22,13 @@ void Texture::SetPixels(unsigned int* pixels, Vec2<short> size)
 	m_size = size;
 	m_size.x *= 2;
 
+	if (m_size.x == 24701)
+		int dl;
+
 	ConvertPixels(pixels, m_pixelData, m_size);
 }
 
-void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short> size)
+void Texture::ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short> size)
 {
 	destination = new CONSOLE_PIXEL[size.x * size.y];
 
@@ -48,7 +47,7 @@ void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short
 	}
 }
 
-CONSOLE_PIXEL SamplePixel(unsigned int pixel)
+CONSOLE_PIXEL Texture::SamplePixel(unsigned int pixel)
 {
 	// Extract BGRA channels to seperate unsigned chars
 	unsigned char b = pixel & 0xFF;

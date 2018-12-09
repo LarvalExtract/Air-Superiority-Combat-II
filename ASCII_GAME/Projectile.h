@@ -2,21 +2,16 @@
 
 #include "Core/Renderer/Sprite.h"
 
-enum ProjectileType
-{
-	PROJECTILE_PLAYER,
-	PROJECTILE_ENEMY
-};
-
 class Projectile : public Sprite
 {
 public:
-	Projectile(ProjectileType type);
+	Projectile();
+	Projectile(const Texture& texture);
 	~Projectile();
 
 	void Update(float deltaTime);
 	void SetFiringState(bool state) { m_bIsFiring = state; }
-	void SetSpeed(float speed) { m_ProjectileSpeed = speed; }
+	void SetVelocity(Vec2<float> velocity) { m_Velocity = velocity; }
 
 	bool IsFiring() const { return m_bIsFiring; }
 
@@ -24,9 +19,12 @@ public:
 
 private:
 	unsigned char m_Damage;
-	float m_ProjectileSpeed;
+	Vec2<float> m_Velocity;
 	bool m_bIsFiring;
 
+public:
 	static Texture s_playerProjectile;
-	static Texture s_enemyProjectile;
+	static Texture s_enemyProjectile1;
+	static Texture s_enemyProjectile2;
+	static Texture s_enemyProjectile3;
 };
