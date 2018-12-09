@@ -5,7 +5,7 @@
 enum EnemyType
 {
 	ENEMY_BIPLANE,
-	ENEMY_MEDIUM,
+	ENEMY_SPITFIRE,
 	ENEMY_GUNSHIP
 };
 

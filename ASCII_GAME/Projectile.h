@@ -26,4 +26,7 @@ private:
 	unsigned char m_Damage;
 	float m_ProjectileSpeed;
 	bool m_bIsFiring;
+
+	static Texture s_playerProjectile;
+	static Texture s_enemyProjectile;
 };

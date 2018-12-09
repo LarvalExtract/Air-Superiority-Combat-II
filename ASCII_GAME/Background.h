@@ -6,9 +6,10 @@
 class BackgroundItem : public Sprite
 {
 public:
-	BackgroundItem(const char* file, float speed) : Sprite(file), m_Speed(speed) {}
+	BackgroundItem() {}
 
 	float GetSpeed() const { return m_Speed; }
+	void SetSpeed(float speed) { m_Speed = speed; }
 
 private:
 	float m_Speed;
@@ -24,7 +25,6 @@ public:
 	void Render(ASCIIRenderer* pRenderer);
 
 private:
-	std::vector<BackgroundItem> m_BackroundItems;
-
+	std::vector<BackgroundItem> m_BackgroundItems;
 	Vec2<int> m_Boundary;
 };

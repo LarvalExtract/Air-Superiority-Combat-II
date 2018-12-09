@@ -4,13 +4,12 @@
 #include <string>
 #include <vector>
 
-#include "SpriteCharacter.h"
-
-class ASCIIRenderer;
+#include "Core/Renderer/Sprite.h"
 
 class SpriteText
 {
 public:
+	SpriteText() : m_bInitialised(false), m_Position(0, 0) {}
 
 	void Initialise();
 	void SetPosition(int x, int y);
@@ -19,7 +18,9 @@ public:
 	void Render(ASCIIRenderer* pRenderer);
 
 private:
-	static std::map<char, SpriteCharacter*> characters;
-	std::vector<SpriteCharacter> m_Sprites;
+	bool m_bInitialised;
+	static std::map<char, Texture> characters;
+
+	std::vector<Sprite> m_Sprites;
 	Vec2<int> m_Position;
 };

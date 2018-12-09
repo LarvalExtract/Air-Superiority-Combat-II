@@ -17,9 +17,6 @@
     <ClCompile Include="Core\Maths\Vector3.cpp">
       <Filter>Core\Maths</Filter>
     </ClCompile>
-    <ClCompile Include="Game\GameObjects\ScoreDisplay.cpp">
-      <Filter>Game\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
@@ -45,6 +42,9 @@
       <Filter>Core\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAnimation.cpp">
+      <Filter>Core\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Core\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,9 +90,6 @@
     <ClInclude Include="Core\Maths\Vector3.h">
       <Filter>Core\Maths</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameObjects\ScoreDisplay.h">
-      <Filter>Game\GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Game\GameObjects</Filter>
     </ClInclude>
@@ -120,13 +117,13 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCharacter.h">
-      <Filter>Core\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="SpriteText.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SpriteAnimation.h">
+      <Filter>Core\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

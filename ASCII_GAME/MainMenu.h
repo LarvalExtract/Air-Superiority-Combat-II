@@ -1,34 +1,49 @@
 #pragma once
 
 #include "Core/Renderer/Sprite.h"
-#include "Game/GameStates.h"
+
+#include <vector>
 
 class ASCIIRenderer;
 
-const int MAX_MENU_ITEMS = 5;
-
-enum MenuOption : unsigned char
-{
-	OPTION_START_GAME = 1,
-	OPTION_HIGH_SCORE,
-	OPTION_CHANGE_SCREEN_SIZE,
-	OPTION_QUIT_GAME
-};
-
-class MainMenu
+class Menu
 {
 public:
-	MainMenu() : m_MenuIndex(1), m_bKeyIsPressed(false) {}
+	Menu();
+	~Menu();
 
-	void Initialise(int screenWidth);
-	void Update();
 	void Render(ASCIIRenderer* pRenderer);
 
-	MenuOption GetSelectedMenuOption() const { return static_cast<MenuOption>(m_MenuIndex); }
+	void AddMenuItem(const Texture& texture);
+
+	void IncrementMenuIndex();
+	void DecrementMenuIndex();
+
+	unsigned char GetSelectedMenuOption() const { return m_MenuIndex; }
+
+	void AlignVertical();
+
+	void SetPosition(short x, short y);
+	void SetItemSpacing(char spacing);
+	void SetSelectionColour(ConsoleColour colour) { m_SelectionColour = colour; }
+
+	void SetSelectionIndex(unsigned char index);
+
+	void SetMinimumIndex(unsigned char index) { m_IndexRange.x = index; }
+	void SetMaximumIndex(unsigned char index) { m_IndexRange.y = index; }
 
 private:
-	Sprite menuSprites[MAX_MENU_ITEMS];
+	std::vector<Sprite> m_MenuSprites;
 
+	ConsoleColour m_SelectionColour;
+
+	Vec2<short> m_Position;
+	Vec2<short> m_Size;
+
+	char m_ItemSpacing;
 	unsigned char m_MenuIndex;
-	bool m_bKeyIsPressed;
+	Vec2<char> m_IndexRange;
+
+	void UpdateMaxSize();
+	void UpdateItemPositions();
 };

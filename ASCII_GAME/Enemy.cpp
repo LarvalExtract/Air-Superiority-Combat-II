@@ -5,7 +5,11 @@ float Enemy::s_DeltaTime = 0.0f;
 
 char	Enemy::s_biplaneRounds = 3;
 char	Enemy::s_mediumFireChance = 10;
-float	Enemy::s_gunshipFireRate = 2.0f;
+float	Enemy::s_gunshipFireRate = 3.0f;
+
+Texture s_spitfireTexture(TGAFile("enemy2.tga"));
+Texture s_biplaneTexture(TGAFile("enemy3.tga"));
+Texture s_gunshipTexture(TGAFile("enemy5.tga"));
 
 Enemy::Enemy(EnemyType type) :
 	type(type)
@@ -13,24 +17,24 @@ Enemy::Enemy(EnemyType type) :
 	switch (type)
 	{
 	case ENEMY_BIPLANE:
-		SetImage("enemy2.tga");
+		SetTexture(s_biplaneTexture);
 		m_Health = 4;
 		m_Speed = 75.0f;
-		m_Points = 100;
+		m_Points = 10;
 		break;
 
-	case ENEMY_MEDIUM:
-		SetImage("enemy3.tga");
+	case ENEMY_SPITFIRE:
+		SetTexture(s_spitfireTexture);
 		m_Health = 5;
 		m_Speed = 60.0f;
-		m_Points = 150;
+		m_Points = 15;
 		break;
 
 	case ENEMY_GUNSHIP:
-		SetImage("enemy6.tga");
+		SetTexture(s_gunshipTexture);
 		m_Health = 12;
 		m_Speed = 35.0f;
-		m_Points = 300;
+		m_Points = 25;
 		break;
 	}
 
@@ -46,7 +50,7 @@ void Enemy::ResetHealth()
 {
 	switch (type)
 	{
-	case ENEMY_MEDIUM: m_Health = 5; break;
+	case ENEMY_SPITFIRE: m_Health = 5; break;
 	case ENEMY_BIPLANE: m_Health = 4; break;
 	case ENEMY_GUNSHIP: m_Health = 12; break;
 	}
@@ -60,9 +64,9 @@ void Enemy::Update(float deltaTime)
 
 	switch (type)
 	{
-	case ENEMY_BIPLANE:	UpdateBiplane(deltaTime); break;
-	case ENEMY_MEDIUM:	break;
-	case ENEMY_GUNSHIP: break;
+	case ENEMY_SPITFIRE:	break;
+	case ENEMY_BIPLANE:		UpdateBiplane(deltaTime); break;
+	case ENEMY_GUNSHIP:		break;
 	}
 
 	m_Position.x -= m_Speed * deltaTime;
@@ -72,12 +76,11 @@ bool Enemy::Fire()
 {
 	switch (type)
 	{
-	case ENEMY_MEDIUM:	return FireMedium();
-	case ENEMY_BIPLANE:	return FireBiplane();
-	case ENEMY_GUNSHIP: return FireGunship();
+	case ENEMY_SPITFIRE:	return FireMedium();
+	case ENEMY_BIPLANE:		return FireBiplane();
+	case ENEMY_GUNSHIP:		return FireGunship();
+	default:				return false;
 	}
-
-	return false;
 }
 
 bool Enemy::FireMedium()
@@ -102,7 +105,7 @@ bool Enemy::FireBiplane()
 
 	bulletTime += s_DeltaTime;
 
-	if (m_TimeSinceLastShot > 2.0f)
+	if (m_TimeSinceLastShot > 5.0f)
 	{
 		if (s_biplaneRounds > 0)
 		{

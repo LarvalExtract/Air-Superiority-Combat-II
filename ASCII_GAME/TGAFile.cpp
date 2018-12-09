@@ -11,12 +11,15 @@ enum TGAHeader
 	TGA_OFFSET_PIXELS = 18
 };
 
+
 TGAFile::TGAFile(const std::string &filePath) :
 	width(0),
 	height(0),
 	pixels(nullptr)
 {
-	std::ifstream file(filePath, std::ios::binary);
+	const std::string SPRITE_FOLDER_PATH = "../sprites/";
+
+	std::ifstream file(SPRITE_FOLDER_PATH + filePath, std::ios::binary);
 
 	// Error: Couldn't open TGA file
 	if (!file.is_open())

@@ -20,7 +20,7 @@ public:
 	float ShootCooldownTime() const { return m_ShootCooldown; }
 
 protected:
-	Plane() : m_Health(0), m_Speed(0.0f), m_bDestroyed(false), m_TookDamage(false) {};
+	Plane() : m_Health(0), m_Speed(0.0f), m_bDestroyed(false), m_TookDamage(false), m_TimeSinceLastShot(0.0f) {}
 
 	char m_Health;
 	float m_Speed;

@@ -1,32 +1,21 @@
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
-#include "../../Vec2.h"
 #include "ConsoleColours.h"
-
-#include <Windows.h>
+#include "../../Texture.h"
 
 class ASCIIRenderer;
-
-// Custom character which adds a transparency flag
-struct CONSOLE_PIXEL
-{
-	CHAR_INFO char_info;
-	bool bOpaque;
-};
 
 class Sprite
 {
 public:
 
 	Sprite();
-	Sprite(const Sprite& other);
-	Sprite(const char* bmpFile);
 	~Sprite();
 
-	void SetImage(const char* bmpFile);
+	void SetTexture(const Texture &texture) { m_Texture = texture; }
 
-	void Initialise(unsigned int* bgraPixels, Vec2<int>& size);
+	//void Initialise(unsigned int* bgraPixels, Vec2<int>& size);
 	//void Initialise(int* pixels, Vector2& size);
 	//void Initialise(CHAR_INFO* pixels, Vector2& size);
 	//void Initialise(char* pixels, ConsoleColour colour, Vector2& size);
@@ -40,18 +29,15 @@ public:
 	void ClearPixelOverrideColour() { m_PixelOverride.Attributes = 0; }
 
 	Vec2<float> GetPosition(){ return m_Position; }
-	Vec2<int> GetSize(){ return m_Size; }
+	Vec2<short> GetSize(){ return m_Texture.m_size; }
 
 	bool Collides(Sprite& otherSprite);
 
 protected:
 	Vec2<float> m_Position;
-	Vec2<int> m_Size;
 
-protected:
-	bool m_bInitialised;
+	Texture m_Texture;
 
-	CONSOLE_PIXEL* m_PixelData;
 	CHAR_INFO m_PixelOverride;
 };
 

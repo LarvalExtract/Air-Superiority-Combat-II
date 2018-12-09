@@ -41,15 +41,12 @@ void ASCIIRenderer::InitialisePixelSize()
 	font_size->dwFontSize.X = 1;	//Width of element in buffer
 	font_size->dwFontSize.Y = 4;	//Hieght of element in buffer
 
-	m_ScreenSize = SCREENSIZE_SMALL;
-
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);	//Set the new font size
 }
 
-void ASCIIRenderer::SetPixelSize(ScreenSize size)
+void ASCIIRenderer::TogglePixelSize()
 {
-	m_ScreenSize = size;
-	font_size->dwFontSize.Y = m_ScreenSize;
+	font_size->dwFontSize.Y == 2 ? font_size->dwFontSize.Y = 4 : font_size->dwFontSize.Y = 2;
 
 	SetCurrentConsoleFontEx(m_hConsole, false, font_size);
 }

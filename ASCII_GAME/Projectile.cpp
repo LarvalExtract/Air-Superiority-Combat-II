@@ -1,5 +1,8 @@
 #include "Projectile.h"
 
+Texture Projectile::s_playerProjectile(TGAFile("projectile1.tga"));
+Texture Projectile::s_enemyProjectile(TGAFile("projectile2.tga"));
+
 Projectile::Projectile(ProjectileType type) :
 	m_Damage(1),
 	m_ProjectileSpeed(0.0f),
@@ -8,11 +11,11 @@ Projectile::Projectile(ProjectileType type) :
 	switch (type)
 	{
 	case PROJECTILE_PLAYER:
-		SetImage("projectile1.tga");
+		SetTexture(s_playerProjectile);
 		m_ProjectileSpeed = 400.0f;
 		break;
 	case PROJECTILE_ENEMY:
-		SetImage("projectile2.tga");
+		SetTexture(s_enemyProjectile);
 		m_ProjectileSpeed = -150.0f;
 		break;
 	}

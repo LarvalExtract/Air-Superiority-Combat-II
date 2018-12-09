@@ -38,6 +38,8 @@ void SpriteAnimation::SetSpriteSheet(const char* tgaFilePath, int frameCount)
 	unsigned int* buffer = new unsigned int[m_Size.x * m_Size.y];
 	unsigned int* tgaPixels = file.Pixels();
 
+	Texture frame;
+
 	for (int i = 0; i < m_FrameCount; i++)
 	{
 		for (int row = 0; row < m_Size.y; row++)
@@ -45,7 +47,8 @@ void SpriteAnimation::SetSpriteSheet(const char* tgaFilePath, int frameCount)
 			std::memcpy(&buffer[row * m_Size.x], &tgaPixels[(i * m_Size.x) + (row * m_Size.x * m_FrameCount)], rowLength);
 		}
 
-		m_Frames[i].Initialise(buffer, m_Size);
+		frame.SetPixels(buffer, m_Size);
+		m_Frames[i].SetTexture(frame);
 	}
 
 	delete[] buffer;
@@ -69,7 +72,7 @@ void SpriteAnimation::Update(float deltaTime)
 
 	time += deltaTime;
 
-	if (time > 0.05f)
+	if (time > m_FrameTime)
 	{
 		m_CurrentFrame++;
 		time = 0.0f;

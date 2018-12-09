@@ -1,33 +1,27 @@
 #include "SpriteText.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
-std::map<char, SpriteCharacter*> SpriteText::characters;
+std::map<char, Texture> SpriteText::characters;
 
 void SpriteText::Initialise()
 {
-	typedef std::pair<char, SpriteCharacter*> pair;
+	if (!m_bInitialised)
+	{
+		typedef std::pair<char, Texture> pair;
 
-	SpriteCharacter* num0 = new SpriteCharacter("numbers/0.tga", 0, 0, 0);
-	SpriteCharacter* num1 = new SpriteCharacter("numbers/1.tga", 0, 0, 0);
-	SpriteCharacter* num2 = new SpriteCharacter("numbers/2.tga", 0, 0, 0);
-	SpriteCharacter* num3 = new SpriteCharacter("numbers/3.tga", 0, 0, 0);
-	SpriteCharacter* num4 = new SpriteCharacter("numbers/4.tga", 0, 0, 0);
-	SpriteCharacter* num5 = new SpriteCharacter("numbers/5.tga", 0, 0, 0);
-	SpriteCharacter* num6 = new SpriteCharacter("numbers/6.tga", 6, 0, 0);
-	SpriteCharacter* num7 = new SpriteCharacter("numbers/7.tga", 0, 0, 0);
-	SpriteCharacter* num8 = new SpriteCharacter("numbers/8.tga", 6, 0, 0);
-	SpriteCharacter* num9 = new SpriteCharacter("numbers/9.tga", 0, 0, 0);
+		characters.insert(pair('0', TGAFile("numbers/0.tga")));
+		characters.insert(pair('1', TGAFile("numbers/1.tga")));
+		characters.insert(pair('2', TGAFile("numbers/2.tga")));
+		characters.insert(pair('3', TGAFile("numbers/3.tga")));
+		characters.insert(pair('4', TGAFile("numbers/4.tga")));
+		characters.insert(pair('5', TGAFile("numbers/5.tga")));
+		characters.insert(pair('6', TGAFile("numbers/6.tga")));
+		characters.insert(pair('7', TGAFile("numbers/7.tga")));
+		characters.insert(pair('8', TGAFile("numbers/8.tga")));
+		characters.insert(pair('9', TGAFile("numbers/9.tga")));
 
-	characters.insert(pair('0', num0));
-	characters.insert(pair('1', num1));
-	characters.insert(pair('2', num2));
-	characters.insert(pair('3', num3));
-	characters.insert(pair('4', num4));
-	characters.insert(pair('5', num5));
-	characters.insert(pair('6', num6));
-	characters.insert(pair('7', num7));
-	characters.insert(pair('8', num8));
-	characters.insert(pair('9', num9));
+		m_bInitialised = true;
+	}
 }
 
 void SpriteText::SetText(const std::string &text)
@@ -36,11 +30,19 @@ void SpriteText::SetText(const std::string &text)
 	m_Sprites.reserve(text.size());
 
 	for (int i = 0; i < text.size(); i++)
-		m_Sprites.push_back(*characters[text[i]]);
+	{
+		m_Sprites.push_back(Sprite());
+		m_Sprites[i].SetTexture(characters[text[i]]);
+	}
+
+	SetPosition(m_Position.x, m_Position.y);
 }
 
 void SpriteText::SetPosition(int x, int y)
 {
+	m_Position.x = x;
+	m_Position.y = y;
+
 	if (m_Sprites.empty())
 		return;
 
@@ -49,7 +51,7 @@ void SpriteText::SetPosition(int x, int y)
 	for (int i = 1; i < m_Sprites.size(); i++)
 	{
 		int xpos = m_Sprites[i - 1].GetPosition().x + m_Sprites[i - 1].GetSize().x + 1;
-		int ypos = y - m_Sprites[i].GetLeading();
+		int ypos = y;
 
 		m_Sprites[i].SetPosition(xpos, ypos);
 	}

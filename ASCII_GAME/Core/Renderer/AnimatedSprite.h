@@ -2,7 +2,6 @@
 #define _ANIMATED_SPRITE_H_
 
 #include <vector>
-#include <Windows.h>
 #include "../Maths/Vector2.h"
 #include "../Maths/Vector3.h"
 #include "Sprite.h"

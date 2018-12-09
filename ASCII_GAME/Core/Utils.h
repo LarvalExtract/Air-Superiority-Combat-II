@@ -11,4 +11,7 @@ inline unsigned int Random(int min, int max)
 	return rand() % (max - min + 1) + min;
 }
 
+inline int Min(int a, int b) { return a < b ? a : b; }
+inline int Max(int a, int b) { return a > b ? a : b; }
+
 #endif

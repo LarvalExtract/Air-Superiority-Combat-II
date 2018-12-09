@@ -9,11 +9,23 @@
 #include "../MainMenu.h"
 #include "../SpriteText.h"
 #include "../SpriteAnimation.h"
+#include "GameObjects/ScoreDisplay.h"
 #include <vector>
 
 #include "../Timer.h"
 
 class ASCIIRenderer;
+
+enum E_KEYS
+{
+	KEY_UP,
+	KEY_LEFT,
+	KEY_RIGHT,
+	KEY_DOWN,
+	KEY_SPACE,
+	KEY_ESCAPE,
+	KEY_RETURN
+};
 
 class Game
 {
@@ -33,8 +45,11 @@ private:
 	void Update(float deltaTime);
 	void Render();
 
+	bool OnKeyPressed(int keycode);
+
 	// Update functions
 	void UpdateMainMenu();
+	void UpdatePauseMenu();
 	void UpdateGame(float deltaTime);
 	void UpdatePlayer(float deltaTime);
 	void UpdateEnemies(float deltaTime);
@@ -61,15 +76,18 @@ private:
 	Projectile& GetProjectile(std::vector<Projectile>& array, ProjectileType type);
 
 	Player player;
-	std::vector<Enemy*> pEnemies;
-
-	
+	std::vector<Enemy> enemies;
 
 	Timer<float> gameTimer;
 
 	E_GAME_STATE m_GameState;
 
-	MainMenu mainMenu;
+	Menu mainMenu;
+	Menu pauseMenu;
+
+	SpriteText scoreDisplay;
+
+	static bool m_Keys[7];
 };
 
 

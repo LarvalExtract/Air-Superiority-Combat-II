@@ -74,7 +74,6 @@
     <ClCompile Include="Core\Renderer\Sprite.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game\Game.cpp" />
-    <ClCompile Include="Game\GameObjects\ScoreDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -82,6 +81,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="SpriteText.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TGAFile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -94,15 +94,14 @@
     <ClInclude Include="Core\Utils.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game\Game.h" />
-    <ClInclude Include="Game\GameObjects\ScoreDisplay.h" />
     <ClInclude Include="Game\GameStates.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SpriteAnimation.h" />
-    <ClInclude Include="SpriteCharacter.h" />
     <ClInclude Include="SpriteText.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vec2.h" />

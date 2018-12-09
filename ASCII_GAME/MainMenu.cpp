@@ -12,62 +12,122 @@ enum MenuSprites
 	MENU_QUIT_GAME
 };
 
-void MainMenu::Initialise(int screenWidth)
+Menu::Menu() :
+	m_SelectionColour(ConsoleColour::BACKGROUND_YELLOW),
+	m_Position(0, 0),
+	m_Size(0, 0),
+	m_ItemSpacing(0),
+	m_MenuIndex(0),
+	m_IndexRange(0, 0)
 {
-	menuSprites[MENU_TITLE].SetImage("menu/menu_title.tga");
-	menuSprites[MENU_START_GAME].SetImage("menu/menu_startgame.tga");
-	menuSprites[MENU_HIGH_SCORE].SetImage("menu/menu_highscore.tga");
-	menuSprites[MENU_SCREEN_SIZE].SetImage("menu/menu_screensize.tga");
-	menuSprites[MENU_QUIT_GAME].SetImage("menu/menu_quit.tga");
 
-	int halfScreenWidth = screenWidth / 2;
-
-	menuSprites[MENU_TITLE].SetPosition(halfScreenWidth - menuSprites[MENU_TITLE].GetSize().x / 2, 40);
-
-	for (unsigned char i = MENU_START_GAME; i < MAX_MENU_ITEMS; i++)
-		menuSprites[i].SetPosition(halfScreenWidth - menuSprites[i].GetSize().x / 2, menuSprites[i - 1].GetPosition().y + menuSprites[i - 1].GetSize().y + 10);
-	
-	menuSprites[MENU_START_GAME].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
 }
 
-void MainMenu::Update()
+Menu::~Menu()
 {
-	if (GetKeyState(VK_UP) < 0)
+
+}
+
+void Menu::AddMenuItem(const Texture &texture)
+{
+	m_MenuSprites.push_back(Sprite());
+	m_MenuSprites.back().SetTexture(texture);
+
+	m_IndexRange.y++;
+
+	UpdateItemPositions();
+	UpdateMaxSize();
+}
+
+void Menu::AlignVertical()
+{
+	//int halfWidth = m_Size.x / 2;	
+
+	for (int i = 0; i < m_MenuSprites.size(); i++)
 	{
-		if (!m_bKeyIsPressed)
-		{
-			menuSprites[m_MenuIndex].ClearPixelOverrideColour();
-
-			if (m_MenuIndex > MENU_START_GAME)
-				m_MenuIndex--;
-
-			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
-		}
-
-		m_bKeyIsPressed = true;
+		m_MenuSprites[i].SetPosition(m_MenuSprites[i].GetPosition().x - m_MenuSprites[i].GetSize().x / 2, m_MenuSprites[i].GetPosition().y);
 	}
-	else if (GetKeyState(VK_DOWN) < 0)
-	{
-		if (!m_bKeyIsPressed)
-		{
-			menuSprites[m_MenuIndex].ClearPixelOverrideColour();
+}
 
-			if (m_MenuIndex < MAX_MENU_ITEMS - 1)
-				m_MenuIndex++;
+void Menu::IncrementMenuIndex()
+{
+	m_MenuSprites[m_MenuIndex].ClearPixelOverrideColour();
 
-			menuSprites[m_MenuIndex].SetPixelOverrideColour(ConsoleColour::BACKGROUND_YELLOW);
-		}
+	m_MenuIndex++;
 
-		m_bKeyIsPressed = true;
-	}
+	if (m_MenuIndex > m_IndexRange.y)
+		m_MenuIndex = m_IndexRange.y;
+
+	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
+}
+
+void Menu::DecrementMenuIndex()
+{
+	m_MenuSprites[m_MenuIndex].ClearPixelOverrideColour();
+
+	m_MenuIndex--;
+
+	if (m_MenuIndex < m_IndexRange.x)
+		m_MenuIndex = m_IndexRange.x;
+
+	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
+}
+
+void Menu::SetSelectionIndex(unsigned char index)
+{
+	if (index >= m_IndexRange.x && index <= m_IndexRange.y)
+		m_MenuIndex = index;
 	else
-	{
-		m_bKeyIsPressed = false;
-	}
+		m_MenuIndex = 0;
+
+	m_MenuSprites[m_MenuIndex].SetPixelOverrideColour(m_SelectionColour);
 }
 
-void MainMenu::Render(ASCIIRenderer* pRenderer)
+void Menu::Render(ASCIIRenderer* pRenderer)
 {
-	for (unsigned char i = 0; i < MAX_MENU_ITEMS; i++)
-		menuSprites[i].Render(pRenderer);
+	for (Sprite& menuSprite : m_MenuSprites)
+		menuSprite.Render(pRenderer);
+}
+
+void Menu::SetPosition(short x, short y)
+{ 
+	m_Position.x = x; 
+	m_Position.y = y; 
+
+	UpdateItemPositions();
+}
+
+void Menu::SetItemSpacing(char spacing)
+{
+	m_ItemSpacing = spacing;
+
+	UpdateItemPositions();
+	UpdateMaxSize();
+}
+
+void Menu::UpdateMaxSize()
+{
+	m_Size.y = 0;
+
+	for (Sprite& item : m_MenuSprites)
+	{
+		if (item.GetSize().x > m_Size.x)
+			m_Size.x = item.GetSize().x;
+
+		m_Size.y += item.GetSize().y;
+	}
+
+	m_Size.y += (m_MenuSprites.size() - 1) * m_ItemSpacing;
+}
+
+void Menu::UpdateItemPositions()
+{
+	m_MenuSprites[0].SetPosition(m_Position.x + m_MenuSprites[0].GetPosition().x, m_Position.y + m_MenuSprites[0].GetPosition().y);
+
+	for (int i = 1; i < m_MenuSprites.size(); i++)
+	{
+		m_MenuSprites[i].SetPosition(
+			m_Position.x + m_MenuSprites[i].GetPosition().x, 
+			m_MenuSprites[i - 1].GetPosition().y + m_MenuSprites[i - 1].GetSize().y + m_ItemSpacing);
+	}
 }
