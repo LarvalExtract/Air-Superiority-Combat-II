@@ -9,7 +9,7 @@ Texture clouds[MAX_CLOUDS] = { TGAFile("cloud1.tga") };
 
 Background::Background(int width, int height) :
 	m_Boundary(width, height),
-	m_BackgroundItems(10)
+	m_BackgroundItems(20)
 {
 	srand(std::chrono::system_clock::time_point().time_since_epoch().count());
 

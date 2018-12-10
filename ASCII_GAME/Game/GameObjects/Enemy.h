@@ -18,7 +18,7 @@ public:
 	~Enemy();
 
 	void Update(float deltaTime);
-	bool Fire() override;
+	bool ShouldFire() override;
 	void SetProjectile(Projectile &proj);
 
 	void ResetHealth();

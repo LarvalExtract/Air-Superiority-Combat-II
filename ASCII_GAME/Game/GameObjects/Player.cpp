@@ -58,7 +58,7 @@ void Player::Update(float deltaTime)
 		m_Position.x += m_Speed * deltaTime;
 }
 
-bool Player::Fire()
+bool Player::ShouldFire()
 {
 	static bool bSpaceIsPressed = false;	// Prevents holding space to shoot
 

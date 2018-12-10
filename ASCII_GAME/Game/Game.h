@@ -26,7 +26,7 @@ enum E_KEYS
 	KEY_RETURN
 };
 
-constexpr int SCREEN_WIDTH = 600;
+constexpr int SCREEN_WIDTH = 700;
 constexpr int SCREEN_HEIGHT = 200;
 
 class Game
@@ -58,6 +58,8 @@ private:
 	// Update game's state
 	void UpdateGame(float deltaTime);
 
+	void UpdateGameOver();
+
 	// Update player's state
 	void UpdatePlayer(float deltaTime);
 
@@ -70,10 +72,11 @@ private:
 	// Update state of all enemy projectiles on screen
 	void UpdateEnemyProjectiles(float deltaTime);
 
+	void IncreaseDifficulty();
+
 	// Render functions
 	void RenderGame();
-	void RenderProjectiles();
-	void RenderExplosions();
+	void RenderGameOverScreen();
 
 	bool OnKeyPressed(int keycode);
 
@@ -102,11 +105,15 @@ private:
 	Menu mainMenu;
 	Menu pauseMenu;
 
+	Sprite splash;
 	SpriteText scoreDisplay;
-	Sprite* m_PlayerLifeIcons;
 	SpriteAnimation explosionSprite;
+	std::vector<Sprite> m_PlayerLifeIcons;
 
 	static bool m_Keys[7];
+
+	// Game difficulty parameters
+	unsigned char enemySpawnChance;
 };
 
 

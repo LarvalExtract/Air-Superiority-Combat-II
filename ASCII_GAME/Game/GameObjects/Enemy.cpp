@@ -19,27 +19,25 @@ Enemy::Enemy(EnemyType type) :
 	{
 	case ENEMY_BIPLANE:
 		SetTexture(s_biplaneTexture);
-		m_Health = 4;
+		m_Health = 5;
 		m_Speed = 75.0f;
 		m_Points = 10;
 		break;
 
 	case ENEMY_SPITFIRE:
 		SetTexture(s_spitfireTexture);
-		m_Health = 5;
+		m_Health = 3;
 		m_Speed = 60.0f;
 		m_Points = 15;
 		break;
 
 	case ENEMY_GUNSHIP:
 		SetTexture(s_gunshipTexture);
-		m_Health = 12;
+		m_Health = 10;
 		m_Speed = 35.0f;
 		m_Points = 25;
 		break;
 	}
-
-	m_bDestroyed = true;
 }
 
 Enemy::~Enemy()
@@ -51,9 +49,9 @@ void Enemy::ResetHealth()
 {
 	switch (m_Type)
 	{
-	case ENEMY_SPITFIRE: m_Health = 5; break;
-	case ENEMY_BIPLANE: m_Health = 4; break;
-	case ENEMY_GUNSHIP: m_Health = 12; break;
+	case ENEMY_SPITFIRE: m_Health = 3; break;
+	case ENEMY_BIPLANE: m_Health = 5; break;
+	case ENEMY_GUNSHIP: m_Health = 10; break;
 	}
 }
 
@@ -73,7 +71,7 @@ void Enemy::Update(float deltaTime)
 	m_Position.x -= m_Speed * deltaTime;
 }
 
-bool Enemy::Fire()
+bool Enemy::ShouldFire()
 {
 	switch (m_Type)
 	{

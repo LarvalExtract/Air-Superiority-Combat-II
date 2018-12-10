@@ -7,9 +7,6 @@ void Plane::ApplyDamage(unsigned char damage)
 	m_HitTime = 0.0f;
 
 	SetPixelOverrideColour(ConsoleColour::BACKGROUND_BRIGHT_RED);
-
-	if (m_Health <= 0)
-		m_bDestroyed = true;
 }
 
 void Plane::Update(float deltaTime)
