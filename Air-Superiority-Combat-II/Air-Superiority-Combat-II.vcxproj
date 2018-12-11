@@ -12,8 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CC3A4598-50CB-4AB8-9342-80ABA43869CB}</ProjectGuid>
-    <RootNamespace>ASCII_GAME</RootNamespace>
+    <RootNamespace>Air-Superiority-Combat-II</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Air-Superiority-Combat-II</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
