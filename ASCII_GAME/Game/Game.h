@@ -47,6 +47,8 @@ private:
 	void Update(float deltaTime);
 	void Render();
 
+	void InitialiseGameOverScreen();
+
 	// Update functions
 
 	// Handle player input in main menu
@@ -58,7 +60,8 @@ private:
 	// Update game's state
 	void UpdateGame(float deltaTime);
 
-	void UpdateGameOver();
+	// Update game over screen
+	void UpdateGameOverScreen(float deltaTime);
 
 	// Update player's state
 	void UpdatePlayer(float deltaTime);
@@ -106,6 +109,10 @@ private:
 	Menu pauseMenu;
 
 	Sprite splash;
+	Sprite gameOver;
+	Sprite highScore;
+	Sprite pressEsc;
+
 	SpriteText scoreDisplay;
 	SpriteAnimation explosionSprite;
 	std::vector<Sprite> m_PlayerLifeIcons;

@@ -5,6 +5,8 @@
 #include "Core/Maths/Vec2.h"
 #include "Core/TGAFile.h"
 
+#include <vector>
+
 struct CONSOLE_PIXEL
 {
 	CHAR_INFO char_info;

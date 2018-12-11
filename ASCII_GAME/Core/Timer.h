@@ -3,6 +3,7 @@
 #include <chrono>
 
 // Timer used to measure elapsed time
+// Based off of code found here: https://www.learncpp.com/cpp-tutorial/8-16-timing-your-code/
 template<class T>
 class Timer
 {

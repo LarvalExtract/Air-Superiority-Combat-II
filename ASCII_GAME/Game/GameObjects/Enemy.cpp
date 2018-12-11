@@ -21,21 +21,21 @@ Enemy::Enemy(EnemyType type) :
 		SetTexture(s_biplaneTexture);
 		m_Health = 5;
 		m_Speed = 75.0f;
-		m_Points = 10;
+		m_Points = 20;
 		break;
 
 	case ENEMY_SPITFIRE:
 		SetTexture(s_spitfireTexture);
 		m_Health = 3;
 		m_Speed = 60.0f;
-		m_Points = 15;
+		m_Points = 10;
 		break;
 
 	case ENEMY_GUNSHIP:
 		SetTexture(s_gunshipTexture);
 		m_Health = 10;
 		m_Speed = 35.0f;
-		m_Points = 25;
+		m_Points = 50;
 		break;
 	}
 }
@@ -82,7 +82,7 @@ bool Enemy::ShouldFire()
 	}
 }
 
-void Enemy::SetProjectile(Projectile &proj)
+void Enemy::Shoot(Projectile &proj)
 {
 	switch (m_Type)
 	{
@@ -100,7 +100,7 @@ void Enemy::SetProjectile(Projectile &proj)
 		break;
 	}
 
-	proj.SetPosition(m_Position.x, m_Position.y + (proj.GetSize().y / 2));
+	proj.SetPosition(m_Position.x, m_Position.y + GetSize().y / 2 - (proj.GetSize().y / 2));
 	proj.SetFiringState(true);
 }
 

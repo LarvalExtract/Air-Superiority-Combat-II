@@ -53,14 +53,11 @@ void ASCIIRenderer::SetWindow(int Width, int Height)
 {
 	COORD MaxWindowSize = GetLargestConsoleWindowSize(m_hConsole);
 
-	short targetWidth = min(MaxWindowSize.X, Width);
-	short targetHeight = min(MaxWindowSize.Y, Height);
-
-	m_Width = targetWidth;
-	m_Height = targetHeight;
+	m_Width = min(MaxWindowSize.X, Width);
+	m_Height = min(MaxWindowSize.Y, Height);
 	
-	SMALL_RECT rect = { 0, 0, targetWidth - 1, targetHeight - 1 };
-	COORD coord = { targetWidth, targetHeight };
+	SMALL_RECT rect = { 0, 0, m_Width - 1, m_Height - 1 };
+	COORD coord = { m_Width, m_Height };
 
 	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
 	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);

@@ -19,7 +19,7 @@ public:
 
 	void Update(float deltaTime);
 	bool ShouldFire() override;
-	void SetProjectile(Projectile &proj);
+	void Shoot(Projectile &proj);
 
 	void ResetHealth();
 

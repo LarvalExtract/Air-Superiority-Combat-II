@@ -81,3 +81,10 @@ bool Player::ShouldFire()
 
 	return false;
 }
+
+void Player::Shoot(Projectile &proj)
+{
+	proj.SetPosition(m_Position.x + GetSize().x, (GetPosition().y + (GetSize().y / 2)) - proj.GetSize().y / 2);
+	proj.SetVelocity(Vec2<float>(400.0f, 0.0f));
+	proj.SetFiringState(true);
+}

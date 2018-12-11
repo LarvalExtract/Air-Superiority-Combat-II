@@ -50,11 +50,18 @@ void SpriteText::SetPosition(int x, int y)
 
 	for (int i = 1; i < m_Sprites.size(); i++)
 	{
-		int xpos = m_Sprites[i - 1].GetPosition().x + m_Sprites[i - 1].GetSize().x + 1;
+		int xpos = m_Sprites[i - 1].GetPosition().x + m_Sprites[i - 1].GetSize().x + m_Spacing;
 		int ypos = y;
 
 		m_Sprites[i].SetPosition(xpos, ypos);
 	}
+}
+
+void SpriteText::SetSpacing(int spacing)
+{
+	m_Spacing = spacing;
+
+	SetPosition(m_Position.x, m_Position.y);
 }
 
 void SpriteText::Render(ASCIIRenderer* pRenderer)
@@ -63,4 +70,22 @@ void SpriteText::Render(ASCIIRenderer* pRenderer)
 	{
 		m_Sprites[i].Render(pRenderer);
 	}
+}
+
+Vec2<int> SpriteText::GetSize()
+{
+	m_Size.x = 0;
+	m_Size.y = 0;
+
+	for (Sprite &character : m_Sprites)
+	{
+		if (character.GetSize().y > m_Size.y)
+			m_Size.y = character.GetSize().y;
+
+		m_Size.x += character.GetSize().x;
+	}
+
+	m_Size.x += m_Spacing * (m_Sprites.size() - 1);
+
+	return m_Size;
 }

@@ -18,7 +18,7 @@ public:
 	void Render();
 
 	void SetPixel(int x, int y, CHAR_INFO& pPixelData);
-	void ClearScreen(ConsoleColour colour);	
+	void ClearScreen(ConsoleColour colour = ConsoleColour::BACKGROUND_BLACK);	
 
 private:
 

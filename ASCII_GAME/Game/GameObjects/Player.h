@@ -2,6 +2,8 @@
 
 #include "Plane.h"
 
+class Projectile;
+
 class Player : public Plane
 {
 public:
@@ -11,6 +13,7 @@ public:
 	void Update(float deltaTime);
 
 	bool ShouldFire() override;
+	void Shoot(Projectile &proj);
 
 	unsigned char GetLives() const { return m_Lives; }
 	unsigned int GetScore() const { return m_Score; }

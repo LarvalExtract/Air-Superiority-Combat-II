@@ -12,11 +12,10 @@ constexpr int SCREEN_BOUNDARY_BOTTOM = SCREEN_HEIGHT - 5;
 constexpr int SCREEN_BOUNDARY_LEFT = 0;
 constexpr int SCREEN_BOUNDARY_RIGHT = 100;
 
-constexpr int MAX_PLAYER_LIVES = 5;
+constexpr int MAX_PLAYER_LIVES = 3;
 constexpr int MAX_ENEMIES = 10;
 constexpr int MAX_PLAYER_PROJECTILES = 15;
 constexpr int MAX_ENEMY_PROJECTILES = 100;
-constexpr int MAX_EXPLOSION_SPRITES = 50;
 
 #define VK_LEFT		0x25
 #define VK_RIGHT	0x27
@@ -51,7 +50,7 @@ Game::Game() :
 	enemies(3),
 	playerProjectiles(MAX_PLAYER_PROJECTILES, Projectile::s_playerProjectile),
 	enemyProjectiles(MAX_ENEMY_PROJECTILES),
-	enemySpawnChance(5)
+	enemySpawnChance(20)
 {
 	
 }
@@ -70,23 +69,21 @@ void Game::Initialise()
 	m_pRenderer->Initialise(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	scoreDisplay.Initialise();
-	scoreDisplay.SetText("0");
-	scoreDisplay.SetPosition(10, 5);
 
-	mainMenu.AddMenuItem(TGAFile("menu/menu_title.tga"));
-	mainMenu.AddMenuItem(TGAFile("menu/menu_startgame.tga"));
-	mainMenu.AddMenuItem(TGAFile("menu/menu_highscore.tga"));
-	mainMenu.AddMenuItem(TGAFile("menu/menu_screensize.tga"));
-	mainMenu.AddMenuItem(TGAFile("menu/menu_quit.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_title.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_startgame.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_highscore.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_screensize.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_quit.tga"));
 	mainMenu.SetPosition(HALF_SCREEN_WIDTH / 2, 20);
 	mainMenu.SetItemSpacing(5);
 	mainMenu.SetMinimumIndex(MAIN_MENU_START);
 	mainMenu.AlignVertical();
 
-	pauseMenu.AddMenuItem(TGAFile("menu/menu_paused.tga"));
-	pauseMenu.AddMenuItem(TGAFile("menu/menu_resume.tga"));
-	pauseMenu.AddMenuItem(TGAFile("menu/menu_screensize.tga"));
-	pauseMenu.AddMenuItem(TGAFile("menu/menu_quit.tga"));
+	pauseMenu.AddMenuItem(TGAFile("ui/menu_paused.tga"));
+	pauseMenu.AddMenuItem(TGAFile("ui/menu_resume.tga"));
+	pauseMenu.AddMenuItem(TGAFile("ui/menu_screensize.tga"));
+	pauseMenu.AddMenuItem(TGAFile("ui/menu_quit.tga"));
 	pauseMenu.SetPosition(HALF_SCREEN_WIDTH / 2, 30);
 	pauseMenu.SetItemSpacing(5);
 	pauseMenu.SetMinimumIndex(PAUSE_MENU_RESUME);
@@ -95,7 +92,7 @@ void Game::Initialise()
 	player.SetMaxLives(MAX_PLAYER_LIVES);
 
 	// Position health icons at top middle of screen
-	for (char i = 0; i < MAX_PLAYER_LIVES; i++)
+	for (char i = 0; i < player.GetMaxLives(); i++)
 	{
 		m_PlayerLifeIcons.push_back(Sprite());
 
@@ -114,7 +111,12 @@ void Game::Initialise()
 	explosionSprite.SetFrameTime(0.035f);
 
 	splash.SetTexture(TGAFile("splash.tga"));
-	splash.SetPosition((HALF_SCREEN_WIDTH - splash.GetSize().y / 2), HALF_SCREEN_HEIGHT - splash.GetSize().y / 2);
+	splash.SetPosition(HALF_SCREEN_WIDTH - splash.GetSize().x / 2, HALF_SCREEN_HEIGHT - splash.GetSize().y / 2);
+	gameOver.SetTexture(TGAFile("ui/game_over.tga"));
+	gameOver.SetPosition(HALF_SCREEN_WIDTH - gameOver.GetSize().x / 2, 10);
+
+	highScore.SetTexture(TGAFile("ui/gameover_high_score.tga"));
+	pressEsc.SetTexture(TGAFile("ui/gameover_press_esc.tga"));
 
 	m_bInitialised = true;
 }
@@ -145,6 +147,7 @@ void Game::InitialiseGame()
 	player.SetScore(0);
 	
 	scoreDisplay.SetText(std::to_string(player.GetScore()));
+	scoreDisplay.SetPosition(10, 5);
 
 	// Reset player projectiles
 	for (Projectile& proj : playerProjectiles)
@@ -155,6 +158,7 @@ void Game::InitialiseGame()
 		proj.SetFiringState(false);
 
 	// Reset enemies
+	enemies.resize(3);
 	for (Enemy& enemy : enemies)
 	{
 		enemy.ResetHealth();
@@ -162,6 +166,18 @@ void Game::InitialiseGame()
 	}
 
 	roundTimer.Reset();
+}
+
+void Game::InitialiseGameOverScreen()
+{
+	int spacing = 8;
+	int totalWidth = highScore.GetSize().x + spacing + scoreDisplay.GetSize().x;
+	int highScorePos = HALF_SCREEN_WIDTH - totalWidth / 2;
+	int scoreDisplayPos = highScorePos + highScore.GetSize().x + spacing;
+
+	highScore.SetPosition(highScorePos, gameOver.GetPosition().y + gameOver.GetSize().y + 10);
+	scoreDisplay.SetPosition(scoreDisplayPos, highScore.GetPosition().y);
+	pressEsc.SetPosition(HALF_SCREEN_WIDTH - pressEsc.GetSize().x / 2, SCREEN_HEIGHT - 30);
 }
 
 void Game::Update(float deltaTime)
@@ -174,7 +190,7 @@ void Game::Update(float deltaTime)
 	case E_GAME_STATE_MAIN_MENU:	UpdateMainMenu(); break;
 	case E_GAME_STATE_IN_GAME:		UpdateGame(deltaTime); break;
 	case E_GAME_STATE_PAUSED:		UpdatePauseMenu(); break;
-	case E_GAME_STATE_GAME_OVER:	UpdateGameOver(); break;
+	case E_GAME_STATE_GAME_OVER:	UpdateGameOverScreen(deltaTime); break;
 	}
 }
 
@@ -188,7 +204,7 @@ void Game::Render()
 
 	switch (m_GameState)
 	{
-	case E_GAME_STATE_MAIN_MENU:	splash.Render(m_pRenderer); mainMenu.Render(m_pRenderer); break;
+	case E_GAME_STATE_MAIN_MENU:	mainMenu.Render(m_pRenderer); break;
 	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
 	case E_GAME_STATE_PAUSED:		RenderGame(); pauseMenu.Render(m_pRenderer); break;
 	case E_GAME_STATE_GAME_OVER:	RenderGameOverScreen(); break;
@@ -200,10 +216,7 @@ void Game::Render()
 
 void Game::UpdateMainMenu()
 {
-	if (OnKeyPressed(VK_ESCAPE))
-		m_bExitApp = true;
-
-	else if (OnKeyPressed(VK_RETURN))
+	if (OnKeyPressed(VK_RETURN))
 	{
 		switch (mainMenu.GetSelectedMenuOption())
 		{
@@ -263,6 +276,7 @@ void Game::UpdateGame(float deltaTime)
 	if (player.GetLives() <= 0)
 	{
 		m_GameState = E_GAME_STATE_GAME_OVER;
+		InitialiseGameOverScreen();
 		return;
 	}
 
@@ -274,9 +288,10 @@ void Game::UpdateGame(float deltaTime)
 	}
 
 	// Make the game harder every 30 seconds
-	if (static_cast<int>(roundTimer.Elapsed()) % 10 > 9)
+	if (roundTimer.Elapsed() > 10.0f)
 	{
 		IncreaseDifficulty();
+		roundTimer.Reset();
 	}
 
 	UpdatePlayer(deltaTime);
@@ -301,17 +316,33 @@ void Game::UpdateGame(float deltaTime)
 	lastScore = player.GetScore();
 }
 
-void Game::UpdateGameOver()
+void Game::UpdateGameOverScreen(float deltaTime)
 {
-	if (OnKeyPressed(VK_RETURN))
+	if (OnKeyPressed(VK_ESCAPE))
 	{
 		m_GameState = E_GAME_STATE_MAIN_MENU;
+	}
+
+	static float flashTime = 0.0f;
+	static bool bOverrideColour = true;
+
+	flashTime += deltaTime;
+	if (flashTime > 0.5f)
+	{
+		// Flashes the "PRESS ESC" sprite
+		bOverrideColour ? pressEsc.SetPixelOverrideColour(BACKGROUND_YELLOW) : pressEsc.ClearPixelOverrideColour();
+
+		bOverrideColour = !bOverrideColour;
+		flashTime = 0.0f;
 	}
 }
 
 void Game::UpdatePlayer(float deltaTime)
 {
 	player.Update(deltaTime);
+
+	if (player.ShouldFire())
+		player.Shoot(GetPlayerProjectile());
 
 	// Prevent player from going above the screen
 	if (player.GetPosition().y < SCREEN_BOUNDARY_TOP)
@@ -328,14 +359,6 @@ void Game::UpdatePlayer(float deltaTime)
 	// Prevent player from going too far right
 	else if (player.GetPosition().x > SCREEN_BOUNDARY_RIGHT)
 		player.SetPosition(SCREEN_BOUNDARY_RIGHT, player.GetPosition().y);
-
-	if (player.ShouldFire())
-	{
-		Projectile& proj = GetPlayerProjectile();
-		proj.SetPosition(player.GetPosition().x + player.GetSize().x, (player.GetPosition().y + (player.GetSize().y / 2)) - proj.GetSize().y / 2);
-		proj.SetVelocity(Vec2<float>(400.0f, 0.0f));
-		proj.SetFiringState(true);
-	}
 }
 
 void Game::UpdateEnemies(float deltaTime)
@@ -347,28 +370,34 @@ void Game::UpdateEnemies(float deltaTime)
 		{
 			enemies[i].Update(deltaTime);
 
+			if (enemies[i].ShouldFire())
+				enemies[i].Shoot(GetEnemyProjectile());
+
 			// Check if enemy has escaped screen
-			if (enemies[i].GetPosition().x + enemies[i].GetSize().x < 0)
+			else if (enemies[i].GetPosition().x + enemies[i].GetSize().x < 0)
 			{
 				enemies[i].SetActive(false);
 				player.DecrementLives();
-				continue;
-			}
-
-			if (enemies[i].ShouldFire())
-			{
-				enemies[i].SetProjectile(GetEnemyProjectile());
-			}
+			}			
 		}
 		// Enemy is ready to be spawned
 		else
 		{
-			if (Random(1, 1000) < enemySpawnChance)
+			static float spawnTimer = 0.0f;
+			spawnTimer += deltaTime;
+
+			// Attempt to spawn an enemy every .25 seconds
+			if (spawnTimer > 0.25f)
 			{
-				// Spawn enemy randomly on the Y axis
-				enemies[i].SetPosition(SCREEN_WIDTH, Random(SCREEN_BOUNDARY_TOP, SCREEN_HEIGHT - enemies[i].GetSize().y));
-				enemies[i].ResetHealth();
-				enemies[i].SetActive();
+				if (Random(1, 1000) < enemySpawnChance)
+				{
+					// Spawn enemy randomly on the Y axis
+					enemies[i].SetPosition(SCREEN_WIDTH, Random(SCREEN_BOUNDARY_TOP, SCREEN_HEIGHT - enemies[i].GetSize().y));
+					enemies[i].ResetHealth();
+					enemies[i].SetActive();
+				}
+
+				spawnTimer = 0.0f;
 			}
 		}
 	}
@@ -400,7 +429,7 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 					{
 						enemies[j].SetActive(false);
 
-						player.AddScore(1);
+						player.AddScore(enemies[j].GetPoints());
 
 						// Draw an explosion where the enemy was destroyed
 						m_Explosions.push_back(explosionSprite);
@@ -430,12 +459,12 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 			if (projectile.GetPosition().x + projectile.GetSize().x < 0)
 			{
 				projectile.SetFiringState(false);
-				continue;
 			}
 
-			if (projectile.Collides(player))
+			else if (projectile.Collides(player))
 			{
 				player.ApplyDamage(1);
+				//player.DecrementLives();
 
 				projectile.SetFiringState(false);
 			}
@@ -446,8 +475,14 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 void Game::IncreaseDifficulty()
 {
 	if (enemies.size() < MAX_ENEMIES)
-		enemies.push_back(Enemy());
-
+	{
+		if (enemies.size() <= 5)
+			enemies.push_back(Enemy(ENEMY_SPITFIRE));
+		else if (enemies.size() <= 8)
+			enemies.push_back(Enemy(ENEMY_BIPLANE));
+		else if (enemies.size() <= 10)
+			enemies.push_back(Enemy(ENEMY_GUNSHIP));
+	}
 	
 }
 
@@ -483,6 +518,11 @@ void Game::RenderGame()
 void Game::RenderGameOverScreen()
 {
 	splash.Render(m_pRenderer);
+
+	gameOver.Render(m_pRenderer);
+	highScore.Render(m_pRenderer);
+	scoreDisplay.Render(m_pRenderer);
+	pressEsc.Render(m_pRenderer);
 }
 
 Projectile& Game::GetPlayerProjectile()
@@ -520,6 +560,7 @@ bool Game::OnKeyPressed(int keycode)
 	case VK_RETURN:	index = KEY_RETURN;	break;
 	}
 
+	// Prevents accidental registration of multiple key presses from the user
 	if (GetKeyState(keycode) < 0)
 	{
 		if (!m_Keys[index])

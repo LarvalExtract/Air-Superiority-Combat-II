@@ -14,16 +14,13 @@ Texture::Texture(const TGAFile &tgaFile) :
 
 Texture::~Texture()
 {
-
+	// Need to clean up pixelData!!!
 }
 
 void Texture::SetPixels(unsigned int* pixels, Vec2<short> size)
 {
 	m_size = size;
 	m_size.x *= 2;
-
-	if (m_size.x == 24701)
-		int dl;
 
 	ConvertPixels(pixels, m_pixelData, m_size);
 }
