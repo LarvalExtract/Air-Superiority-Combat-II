@@ -25,7 +25,7 @@ public:
 
 	unsigned int GetPoints() const { return m_Points; }
 
-	void SetEnemyType(EnemyType type) { m_Type = type; }
+	void SetEnemyType(EnemyType type);
 
 private:
 	void UpdateBiplane(float deltaTime);

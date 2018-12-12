@@ -50,6 +50,9 @@
     <ClCompile Include="Core\TGAFile.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="HealthDisplay.cpp">
+      <Filter>Game\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\GameStates.h">
@@ -114,6 +117,9 @@
     </ClInclude>
     <ClInclude Include="Core\Timer.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthDisplay.h">
+      <Filter>Game\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

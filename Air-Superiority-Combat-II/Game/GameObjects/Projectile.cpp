@@ -8,14 +8,14 @@ Texture Projectile::s_enemyProjectile2(TGAFile("projectile2.tga"));
 Texture Projectile::s_enemyProjectile3(enemyProjectile3Pixels, Vec2<short>(3, 1));
 
 Projectile::Projectile() :
-	m_Damage(1),
+	m_Damage(100.0f),
 	m_bIsFiring(false)
 {
 	
 }
 
 Projectile::Projectile(const Texture& texture) :
-	m_Damage(1),
+	m_Damage(100.0f),
 	m_bIsFiring(false)
 {
 	SetTexture(texture);

@@ -15,10 +15,10 @@ public:
 
 	bool IsFiring() const { return m_bIsFiring; }
 
-	unsigned char GetDamage() const { return m_Damage; }
+	float GetDamage() const { return m_Damage; }
 
 private:
-	unsigned char m_Damage;
+	float m_Damage;
 	Vec2<float> m_Velocity;
 	bool m_bIsFiring;
 

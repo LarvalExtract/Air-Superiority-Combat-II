@@ -17,7 +17,7 @@ public:
 
 	//void Initialise(unsigned int* bgraPixels, Vec2<int>& size);
 	//void Initialise(int* pixels, Vector2& size);
-	//void Initialise(CHAR_INFO* pixels, Vector2& size);
+	void Initialise(CONSOLE_PIXEL* pixels, Vec2<short> &size); 
 	//void Initialise(char* pixels, ConsoleColour colour, Vector2& size);
 	//void Initialise(wchar_t* pixels, ConsoleColour colour, Vector2& size);
 
@@ -27,6 +27,8 @@ public:
 	void SetPosition(Vec2<float>& position) { m_Position = position; }
 	void SetPixelOverrideColour(ConsoleColour colour) { m_PixelOverride.Attributes = colour; }
 	void ClearPixelOverrideColour() { m_PixelOverride.Attributes = 0; }
+
+	Texture& GetTexture() { return m_Texture; }
 
 	Vec2<float> GetPosition(){ return m_Position; }
 	Vec2<short> GetSize(){ return m_Texture.m_size; }

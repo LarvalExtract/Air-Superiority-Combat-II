@@ -15,29 +15,7 @@ Texture s_gunshipTexture(TGAFile("enemy5.tga"));
 Enemy::Enemy(EnemyType type) :
 	m_Type(type)
 {
-	switch (type)
-	{
-	case ENEMY_BIPLANE:
-		SetTexture(s_biplaneTexture);
-		m_Health = 5;
-		m_Speed = 75.0f;
-		m_Points = 20;
-		break;
-
-	case ENEMY_SPITFIRE:
-		SetTexture(s_spitfireTexture);
-		m_Health = 3;
-		m_Speed = 60.0f;
-		m_Points = 10;
-		break;
-
-	case ENEMY_GUNSHIP:
-		SetTexture(s_gunshipTexture);
-		m_Health = 10;
-		m_Speed = 35.0f;
-		m_Points = 50;
-		break;
-	}
+	SetEnemyType(type);
 }
 
 Enemy::~Enemy()
@@ -47,12 +25,39 @@ Enemy::~Enemy()
 
 void Enemy::ResetHealth()
 {
+	m_Health = m_MaxHealth;
+}
+
+void Enemy::SetEnemyType(EnemyType type)
+{
+	m_Type = type;
+
 	switch (m_Type)
 	{
-	case ENEMY_SPITFIRE: m_Health = 3; break;
-	case ENEMY_BIPLANE: m_Health = 5; break;
-	case ENEMY_GUNSHIP: m_Health = 10; break;
+	case ENEMY_BIPLANE:
+		SetTexture(s_biplaneTexture);
+		m_MaxHealth = 500.0f;
+		m_Speed = 75.0f;
+		m_Points = 20;
+		break;
+
+	case ENEMY_SPITFIRE:
+		SetTexture(s_spitfireTexture);
+		m_MaxHealth = 300.0f;
+		m_Speed = 60.0f;
+		m_Points = 10;
+		break;
+
+	case ENEMY_GUNSHIP:
+		SetTexture(s_gunshipTexture);
+		m_MaxHealth = 1000.0f;
+		m_Speed = 35.0f;
+		m_Points = 50;
+		break;
 	}
+
+	m_HealthDisplay.SetMaximumValue(m_MaxHealth);
+	ResetHealth();
 }
 
 void Enemy::Update(float deltaTime)

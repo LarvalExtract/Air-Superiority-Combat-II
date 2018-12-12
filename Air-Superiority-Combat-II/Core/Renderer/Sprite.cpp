@@ -60,25 +60,20 @@ Sprite::~Sprite()
 //	m_bInitialised = true;
 //}
 
-//void Sprite::Initialise(CHAR_INFO* pixels, Vec2<short> size)
-//{
-//	m_Texture.m_size = size;
-//
-//	m_Texture.m_pixelData = new CONSOLE_PIXEL*[m_Texture.m_size.y];
-//
-//	for (int i = 0; i < m_Size.y; i++)
-//	{
-//		m_Texture.m_pixelData[i] = new CHAR_INFO[m_Size.x];
-//	}
-//
-//	for (int y = 0; y < m_Size.y; y++)
-//	{
-//		for (int x = 0; x < m_Size.x; x++)
-//		{
-//			m_PixelData[y][x] = pixels[x + (y*m_Size.x)];
-//		}
-//	}
-//}
+void Sprite::Initialise(CONSOLE_PIXEL* pixels, Vec2<short> &size)
+{
+	m_Texture.m_size = size;
+
+	m_Texture.m_pixelData = new CONSOLE_PIXEL[m_Texture.m_size.x * m_Texture.m_size.y];
+
+	for (int y = 0; y < m_Texture.m_size.y; y++)
+	{
+		for (int x = 0; x < m_Texture.m_size.x; x++)
+		{
+			m_Texture.m_pixelData[x + (y*m_Texture.m_size.x)] = pixels[x + (y*m_Texture.m_size.x)];
+		}
+	}
+}
 
 //void Sprite::Initialise(char* pixels, ConsoleColour colour, Vector2& size)
 //{

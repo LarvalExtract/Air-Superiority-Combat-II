@@ -9,7 +9,8 @@ Player::Player() :
 	m_MaxLives(3)
 {
 	SetTexture(TGAFile("player.tga"));
-	m_Health = 10.0f;
+	m_MaxHealth = 500.0f;
+	m_Health = m_MaxHealth;
 	m_Speed = 150.0f;
 	m_ShootCooldown = 0.15f;
 }

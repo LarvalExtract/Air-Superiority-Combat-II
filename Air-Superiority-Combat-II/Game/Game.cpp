@@ -500,10 +500,16 @@ void Game::RenderGame()
 		if (enemy.IsActive())
 			enemy.Render(m_pRenderer);
 
+	for (Enemy &enemy : enemies)
+		if (enemy.IsActive())
+			enemy.RenderHealthDisplay(m_pRenderer);
+
 	// Render player projectiles
 	for (Projectile &proj : playerProjectiles)
 		if (proj.IsFiring())
 			proj.Render(m_pRenderer);
+
+	player.RenderHealthDisplay(m_pRenderer);
 
 	// Render enemy projectiles
 	for (Projectile &proj : enemyProjectiles)
