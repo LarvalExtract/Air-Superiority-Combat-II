@@ -11,6 +11,12 @@ void Plane::ApplyDamage(float damage)
 	m_HealthDisplay.SetValue(m_Health);
 }
 
+void Plane::SetMaxHealth(float value)
+{
+	m_MaxHealth = value;
+	m_HealthDisplay.SetMaximumValue(value);
+}
+
 void Plane::Update(float deltaTime)
 {
 	m_HitTime += deltaTime;
@@ -25,4 +31,10 @@ void Plane::Update(float deltaTime)
 void Plane::RenderHealthDisplay(ASCIIRenderer* pRenderer)
 {
 	m_HealthDisplay.Render(pRenderer);
+}
+
+void Plane::ResetHealth()
+{
+	m_Health = m_MaxHealth;
+	m_HealthDisplay.SetValue(m_MaxHealth);
 }

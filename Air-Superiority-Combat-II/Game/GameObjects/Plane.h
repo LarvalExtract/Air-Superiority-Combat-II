@@ -15,12 +15,11 @@ public:
 
 	void ApplyDamage(float damage);
 	float GetHealth() const { return m_Health; }
+	void SetMaxHealth(float value);
+	void ResetHealth();
 
 	void SetActive(bool value = true) { m_bActive = value; }
 	bool IsActive() const { return m_bActive; }
-
-	float TimeSinceLastShot() const { return m_TimeSinceLastShot; }
-	float ShootCooldownTime() const { return m_ShootCooldown; }
 
 protected:
 	Plane() : m_Health(0), m_Speed(0.0f), m_bActive(false), m_TookDamage(false), m_TimeSinceLastShot(0.0f) {}

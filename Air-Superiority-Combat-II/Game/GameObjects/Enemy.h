@@ -21,8 +21,6 @@ public:
 	bool ShouldFire() override;
 	void Shoot(Projectile &proj);
 
-	void ResetHealth();
-
 	unsigned int GetPoints() const { return m_Points; }
 
 	void SetEnemyType(EnemyType type);

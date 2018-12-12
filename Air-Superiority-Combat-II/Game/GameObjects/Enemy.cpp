@@ -23,11 +23,6 @@ Enemy::~Enemy()
 
 }
 
-void Enemy::ResetHealth()
-{
-	m_Health = m_MaxHealth;
-}
-
 void Enemy::SetEnemyType(EnemyType type)
 {
 	m_Type = type;

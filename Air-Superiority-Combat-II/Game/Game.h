@@ -89,6 +89,7 @@ private:
 
 	std::vector<Projectile> playerProjectiles;
 	std::vector<Projectile> enemyProjectiles;
+
 	std::vector<SpriteAnimation> m_Explosions;
 
 	// Returns the first inactive player projectile

@@ -27,10 +27,7 @@ void HealthDisplay::SetValue(float value)
 {
 	m_Value = value;
 
-	int maxValueInt = static_cast<int>(m_MaxValue + 0.5f);
-	int steps = maxValueInt / barSize.x;
-
-	int fill = static_cast<int>(m_Value + 0.5f) / steps;
+	int fill = (barSize.x / m_MaxValue) * value;
 
 	for (char i = 0; i < barSize.x; i++)
 	{
