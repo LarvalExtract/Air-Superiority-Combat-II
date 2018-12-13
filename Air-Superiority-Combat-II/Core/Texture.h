@@ -18,14 +18,16 @@ class Texture
 public:
 	Texture() : m_pixelData(nullptr), m_size(0, 0) {}
 	Texture(const TGAFile& tgaFile);
-	Texture(CONSOLE_PIXEL* pixels, Vec2<short> size) : m_pixelData(pixels), m_size(size) {}
+	Texture(CONSOLE_PIXEL* pixels, Vec2<short> size);
 	~Texture();
 
 	void SetPixels(unsigned int* pixels, Vec2<short> size);
 
-	static void ConvertPixels(unsigned int*, CONSOLE_PIXEL* &, Vec2<short>);
-	static CONSOLE_PIXEL SamplePixel(unsigned int);
+	static void CleanUpAllTextures();	// Cleans up all textures, should only be called in the game's destructor!
 
 	CONSOLE_PIXEL* m_pixelData;
 	Vec2<short> m_size;
+
+private:
+	static std::vector<CONSOLE_PIXEL*> s_TextureCatalog;	// Keeps track of all texture data stored on the heap
 };

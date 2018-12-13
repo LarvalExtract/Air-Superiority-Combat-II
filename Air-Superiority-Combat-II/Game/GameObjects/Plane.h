@@ -6,9 +6,7 @@
 class Plane : public Sprite
 {
 public:
-	virtual ~Plane() {};
-
-	virtual bool ShouldFire() = 0;
+	~Plane() {};
 
 	void Update(float deltaTime);
 	void RenderHealthDisplay(ASCIIRenderer* pRenderer);

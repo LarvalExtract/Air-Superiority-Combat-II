@@ -2,6 +2,12 @@
 #include "Core/Utils.h"
 #include "Core/Renderer/ConsoleColours.h"
 
+// Function prototypes
+void ConvertPixels(unsigned int*, CONSOLE_PIXEL* &, Vec2<short>);
+CONSOLE_PIXEL SamplePixel(unsigned int);
+
+std::vector<CONSOLE_PIXEL*> Texture::s_TextureCatalog;
+
 Texture::Texture(const TGAFile &tgaFile) :
 	m_pixelData(nullptr),
 	m_size(0, 0)
@@ -10,6 +16,15 @@ Texture::Texture(const TGAFile &tgaFile) :
 	m_size.y = tgaFile.Height();
 
 	ConvertPixels(tgaFile.Pixels(), m_pixelData, m_size);
+
+	Texture::s_TextureCatalog.push_back(m_pixelData);
+}
+
+Texture::Texture(CONSOLE_PIXEL* pixels, Vec2<short> size) : 
+	m_pixelData(pixels), 
+	m_size(size)
+{
+	Texture::s_TextureCatalog.push_back(m_pixelData);
 }
 
 Texture::~Texture()
@@ -23,9 +38,19 @@ void Texture::SetPixels(unsigned int* pixels, Vec2<short> size)
 	m_size.x *= 2;
 
 	ConvertPixels(pixels, m_pixelData, m_size);
+
+	Texture::s_TextureCatalog.push_back(m_pixelData);
 }
 
-void Texture::ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short> size)
+void Texture::CleanUpAllTextures()
+{
+	for (int i = 0; i < Texture::s_TextureCatalog.size(); i++)
+	{
+		SAFE_DELETE_ARY(Texture::s_TextureCatalog[i]);
+	}
+}
+
+void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short> size)
 {
 	destination = new CONSOLE_PIXEL[size.x * size.y];
 
@@ -44,7 +69,7 @@ void Texture::ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, V
 	}
 }
 
-CONSOLE_PIXEL Texture::SamplePixel(unsigned int pixel)
+CONSOLE_PIXEL SamplePixel(unsigned int pixel)
 {
 	// Extract BGRA channels to seperate unsigned chars
 	unsigned char b = pixel & 0xFF;

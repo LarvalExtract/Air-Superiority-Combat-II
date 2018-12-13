@@ -2,10 +2,11 @@
 #include "Core/Renderer/ASCIIRenderer.h"
 
 std::map<char, Texture> SpriteText::characters;
+bool SpriteText::bInitialised = false;
 
 void SpriteText::Initialise()
 {
-	if (!m_bInitialised)
+	if (!bInitialised)
 	{
 		typedef std::pair<char, Texture> pair;
 
@@ -20,12 +21,15 @@ void SpriteText::Initialise()
 		characters.insert(pair('8', TGAFile("numbers/8.tga")));
 		characters.insert(pair('9', TGAFile("numbers/9.tga")));
 
-		m_bInitialised = true;
+		bInitialised = true;
 	}
 }
 
 void SpriteText::SetText(const std::string &text)
 {
+	if (!bInitialised)
+		return;
+
 	m_Sprites.clear();
 	m_Sprites.reserve(text.size());
 
@@ -40,6 +44,9 @@ void SpriteText::SetText(const std::string &text)
 
 void SpriteText::SetPosition(int x, int y)
 {
+	if (!bInitialised)
+		return;
+
 	m_Position.x = x;
 	m_Position.y = y;
 
@@ -59,6 +66,9 @@ void SpriteText::SetPosition(int x, int y)
 
 void SpriteText::SetSpacing(int spacing)
 {
+	if (!bInitialised)
+		return;
+
 	m_Spacing = spacing;
 
 	SetPosition(m_Position.x, m_Position.y);
@@ -66,6 +76,9 @@ void SpriteText::SetSpacing(int spacing)
 
 void SpriteText::Render(ASCIIRenderer* pRenderer)
 {
+	if (!bInitialised)
+		return;
+
 	for (int i = 0; i < m_Sprites.size(); i++)
 	{
 		m_Sprites[i].Render(pRenderer);
@@ -74,6 +87,9 @@ void SpriteText::Render(ASCIIRenderer* pRenderer)
 
 Vec2<int> SpriteText::GetSize()
 {
+	if (!bInitialised)
+		return Vec2<int>(0, 0);
+
 	m_Size.x = 0;
 	m_Size.y = 0;
 

@@ -3,13 +3,12 @@
 
 #include <chrono>
 
-const int MAX_CLOUDS = 1;
-Texture clouds[MAX_CLOUDS] = { TGAFile("cloud1.tga") };
-
+const int MAX_CLOUDS = 4;
+Texture clouds[MAX_CLOUDS] = { TGAFile("background/Cloud1.tga"), TGAFile("background/Cloud2.tga"), TGAFile("background/Cloud3.tga"),TGAFile("background/Cloud4.tga") };
 
 Background::Background(int width, int height) :
 	m_Boundary(width, height),
-	m_BackgroundItems(20)
+	m_BackgroundItems(10)
 {
 	srand(std::chrono::system_clock::time_point().time_since_epoch().count());
 

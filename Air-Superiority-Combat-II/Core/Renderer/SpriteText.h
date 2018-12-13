@@ -9,9 +9,9 @@
 class SpriteText
 {
 public:
-	SpriteText() : m_bInitialised(false), m_Position(0, 0), m_Size(0, 0), m_Spacing(1) {}
+	SpriteText() : m_Position(0, 0), m_Size(0, 0), m_Spacing(1) {}
 
-	void Initialise();
+	static void Initialise();
 	void SetPosition(int x, int y);
 	void SetSpacing(int spacing);
 
@@ -21,7 +21,7 @@ public:
 	Vec2<int> GetSize();
 
 private:
-	bool m_bInitialised;
+	static bool bInitialised;
 	static std::map<char, Texture> characters;
 
 	std::vector<Sprite> m_Sprites;

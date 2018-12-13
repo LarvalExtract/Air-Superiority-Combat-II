@@ -41,7 +41,8 @@ public:
 private:
 	bool m_bInitialised;
 	bool m_bExitApp;
-	bool m_bWait;
+	bool m_bPlayerDied;
+	bool m_bEndlessMode;
 
 	//Functions
 	void InitialiseGame();
@@ -74,7 +75,7 @@ private:
 	void UpdatePlayerProjectiles(float deltaTime);
 
 	// Update state of all enemy projectiles on screen. Returns true if player was destroyed
-	bool UpdateEnemyProjectiles(float deltaTime);
+	void UpdateEnemyProjectiles(float deltaTime);
 
 	void IncreaseDifficulty();
 
@@ -83,9 +84,11 @@ private:
 	void RenderGameOverScreen();
 
 	void ResetGameObjects();
+	void ResetEnemies();
+	void ResetAllProjectiles();
 	bool OnKeyPressed(int keycode);
 	void DrawExplosion(Vec2<float> &position);
-	//void Wait();
+	void RespawnPlayer(float respawnTime);
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
@@ -104,6 +107,7 @@ private:
 
 	Timer<float> gameTimer;
 	Timer<float> roundTimer;
+	float m_deltaTime;
 
 	E_GAME_STATE m_GameState;
 
@@ -116,13 +120,14 @@ private:
 	Sprite pressEsc;
 
 	SpriteText scoreDisplay;
+	SpriteText killCountDisplay;
 	SpriteAnimation explosionSprite;
 	std::vector<Sprite> m_PlayerLifeIcons;
 
 	static bool m_Keys[7];
 
-	// Game difficulty parameters
 	unsigned char enemySpawnChance;
+	unsigned char m_KillCount;
 };
 
 

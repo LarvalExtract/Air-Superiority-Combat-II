@@ -18,7 +18,7 @@ public:
 	~Enemy();
 
 	void Update(float deltaTime);
-	bool ShouldFire() override;
+	bool ShouldFire();
 	void Shoot(Projectile &proj);
 
 	unsigned int GetPoints() const { return m_Points; }
@@ -26,8 +26,6 @@ public:
 	void SetEnemyType(EnemyType type);
 
 private:
-	void UpdateBiplane(float deltaTime);
-
 	bool FireSpitfire();
 	bool FireBiplane();
 	bool FireGunship();

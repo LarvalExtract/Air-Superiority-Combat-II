@@ -10,7 +10,7 @@ public:
 	Player();
 	~Player() {}
 
-	bool ShouldFire() override;
+	bool ShouldFire();
 	void Shoot(Projectile &proj);
 
 	unsigned char GetLives() const { return m_Lives; }

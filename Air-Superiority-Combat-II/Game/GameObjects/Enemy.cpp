@@ -4,7 +4,7 @@
 
 char	Enemy::s_biplaneRounds = 3;
 char	Enemy::s_mediumFireChance = 15;
-float	Enemy::s_gunshipFireRate = 3.0f;
+float	Enemy::s_gunshipFireRate = 2.0f;
 
 Texture s_spitfireTexture(TGAFile("enemy3.tga"));
 Texture s_biplaneTexture(TGAFile("enemy2.tga"));
@@ -87,7 +87,7 @@ void Enemy::Shoot(Projectile &proj)
 	case ENEMY_GUNSHIP:		
 		proj.SetTexture(Projectile::s_enemyProjectile2);
 		proj.SetVelocity(Vec2<float>(-125.0f, 0.0f));
-		proj.SetDamage(125.0f);
+		proj.SetDamage(140.0f);
 		break;
 	}
 

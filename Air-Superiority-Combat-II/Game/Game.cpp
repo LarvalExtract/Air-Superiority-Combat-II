@@ -13,7 +13,7 @@ constexpr int SCREEN_BOUNDARY_LEFT = 0;
 constexpr int SCREEN_BOUNDARY_RIGHT = 100;
 
 constexpr int MAX_PLAYER_LIVES = 3;
-constexpr int MAX_ENEMIES = 10;
+constexpr int MAX_ENEMIES = 50;
 constexpr int MAX_PLAYER_PROJECTILES = 15;
 constexpr int MAX_ENEMY_PROJECTILES = 100;
 
@@ -24,12 +24,12 @@ constexpr int MAX_ENEMY_PROJECTILES = 100;
 bool Game::m_Keys[7] = { false };
 
 Texture playerHealthIcon(TGAFile("health_icon.tga"));
-TextureArray explosion(TGAFile("explosion.tga"), 6);
+TextureArray explosionFrames(TGAFile("explosion.tga"), 6);
 
 enum E_MAIN_MENU_OPTIONS : unsigned char
 {
 	MAIN_MENU_START = 1,
-	MAIN_MENU_HIGHSCORE,
+	MAIN_MENU_START_ENDLESS,
 	MAIN_MENU_SCREENSIZE,
 	MAIN_MENU_QUIT
 };
@@ -45,7 +45,7 @@ Game::Game() :
 	m_pRenderer(NULL),
 	m_bInitialised(false),
 	m_bExitApp(false),
-	m_bWait(false),
+	m_bPlayerDied(false),
 	clouds(SCREEN_WIDTH, SCREEN_HEIGHT),
 	m_GameState(E_GAME_STATE_MAIN_MENU),
 	enemies(3),
@@ -59,6 +59,9 @@ Game::Game() :
 Game::~Game()
 {
 	SAFE_DELETE_PTR(m_pRenderer);
+
+	// Delete all texture data from memory
+	Texture::CleanUpAllTextures();
 }
 
 void Game::Initialise()
@@ -69,11 +72,11 @@ void Game::Initialise()
 	m_pRenderer = new ASCIIRenderer();
 	m_pRenderer->Initialise(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	scoreDisplay.Initialise();
+	SpriteText::Initialise();
 
 	mainMenu.AddMenuItem(TGAFile("ui/menu_title.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_startgame.tga"));
-	mainMenu.AddMenuItem(TGAFile("ui/menu_highscore.tga"));
+	mainMenu.AddMenuItem(TGAFile("ui/menu_startendless.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_screensize.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_quit.tga"));
 	mainMenu.SetPosition(HALF_SCREEN_WIDTH / 2, 20);
@@ -108,7 +111,7 @@ void Game::Initialise()
 		m_PlayerLifeIcons[i].SetPosition(HALF_SCREEN_WIDTH - (totalWidth / 2) + xpos, ypos);
 	}
 
-	explosionSprite.SetTextureArray(explosion);
+	explosionSprite.SetTextureArray(explosionFrames);
 	explosionSprite.SetFrameTime(0.035f);
 
 	splash.SetTexture(TGAFile("splash.tga"));
@@ -126,15 +129,14 @@ void Game::Run()
 {
 	float lastTime = 0.0f;
 	float newTime = gameTimer.Elapsed();
-	float deltaTime;
 
 	while (!m_bExitApp)
 	{
 		newTime = gameTimer.Elapsed();
-		deltaTime = newTime - lastTime;
+		m_deltaTime = newTime - lastTime;
 		lastTime = newTime;
 
-		Update(deltaTime);
+		Update(m_deltaTime);
 
 		Render();
 	}
@@ -148,9 +150,14 @@ void Game::InitialiseGame()
 	player.SetMaxLives(MAX_PLAYER_LIVES);
 	player.SetLives(MAX_PLAYER_LIVES);
 	player.SetScore(0);
+
+	m_KillCount = 0;
 	
 	scoreDisplay.SetText(std::to_string(player.GetScore()));
 	scoreDisplay.SetPosition(10, 5);
+
+	killCountDisplay.SetText(std::to_string(m_KillCount));
+	killCountDisplay.SetPosition(SCREEN_WIDTH - 100, 5);
 
 	// Reset player projectiles
 	for (Projectile& proj : playerProjectiles)
@@ -167,6 +174,8 @@ void Game::InitialiseGame()
 		enemy.ResetHealth();
 		enemy.SetActive(false);
 	}
+
+	m_Explosions.clear();
 
 	roundTimer.Reset();
 }
@@ -226,9 +235,12 @@ void Game::UpdateMainMenu()
 		case MAIN_MENU_START:				// Start game
 			InitialiseGame();
 			m_GameState = E_GAME_STATE_IN_GAME;
+			m_bEndlessMode = false;
 			break;
-		case MAIN_MENU_HIGHSCORE:			// Show highest score
-
+		case MAIN_MENU_START_ENDLESS:		// Start endless game mode
+			InitialiseGame();
+			m_GameState = E_GAME_STATE_IN_GAME;
+			m_bEndlessMode = true;
 			break;
 		case MAIN_MENU_SCREENSIZE:			// Toggle screen size
 			m_pRenderer->TogglePixelSize();
@@ -276,15 +288,26 @@ void Game::UpdatePauseMenu()
 
 void Game::UpdateGame(float deltaTime)
 {
-	static bool wait = false;
-
-	if (player.GetLives() <= 0)
+	if (m_bEndlessMode)
 	{
-		m_GameState = E_GAME_STATE_GAME_OVER;
-		InitialiseGameOverScreen();
-		return;
+		if (player.GetLives() <= 0)	// End game condition for endless mode
+		{
+			m_GameState = E_GAME_STATE_GAME_OVER;
+			InitialiseGameOverScreen();
+			return;
+		}
+	}
+	else
+	{
+		if (player.GetLives() <= 0 || m_KillCount >= 50)	// End game condition for normal game mode
+		{
+			m_GameState = E_GAME_STATE_GAME_OVER;
+			InitialiseGameOverScreen();
+			return;
+		}
 	}
 
+	// Pause the game if user pressed esc
 	if (OnKeyPressed(VK_ESCAPE))
 	{
 		m_GameState = E_GAME_STATE_PAUSED;
@@ -300,18 +323,10 @@ void Game::UpdateGame(float deltaTime)
 		it->GetLoopCount() > 0 ? it = m_Explosions.erase(it) : it++;
 	}
 
-	if (wait)
+	// If player was destroyed, wait 2 seconds before respawning player and resuming action
+	if (m_bPlayerDied)
 	{
-		static float waitTime = 0.0f;
-		waitTime += deltaTime;
-
-		if (waitTime > 3.0f)
-		{
-			player.SetActive(true);
-			wait = false;
-			waitTime = 0.0f;
-		}
-
+		RespawnPlayer(2.0f);
 		return;
 	}
 
@@ -326,12 +341,17 @@ void Game::UpdateGame(float deltaTime)
 	UpdateEnemies(deltaTime);
 
 	UpdatePlayerProjectiles(deltaTime);
-	wait = UpdateEnemyProjectiles(deltaTime);
+	UpdateEnemyProjectiles(deltaTime);
 
 	static int lastScore = 0;
 	if (player.GetScore() > lastScore)
 		scoreDisplay.SetText(std::to_string(player.GetScore()));
 	lastScore = player.GetScore();
+
+	static int lastKillCount = 0;
+	if (m_KillCount > lastKillCount)
+		killCountDisplay.SetText(std::to_string(m_KillCount));
+	lastKillCount = m_KillCount;
 }
 
 void Game::UpdateGameOverScreen(float deltaTime)
@@ -397,20 +417,20 @@ void Game::UpdatePlayer(float deltaTime)
 
 void Game::UpdateEnemies(float deltaTime)
 {
-	for (int i = 0; i < enemies.size(); i++)
+	for (Enemy &enemy : enemies)
 	{
 		// Enemy is alive on screen
-		if (enemies[i].IsActive())
+		if (enemy.IsActive())
 		{
-			enemies[i].Update(deltaTime);
+			enemy.Update(deltaTime);
 
-			if (enemies[i].ShouldFire())
-				enemies[i].Shoot(GetProjectile(enemyProjectiles));
+			if (enemy.ShouldFire())
+				enemy.Shoot(GetProjectile(enemyProjectiles));
 
 			// Check if enemy has reached left side of screen
-			else if (enemies[i].GetPosition().x < 0)
+			else if (enemy.GetPosition().x < 0)
 			{
-				enemies[i].SetActive(false);
+				enemy.SetActive(false);
 				player.DecrementLives();
 			}			
 		}
@@ -426,9 +446,9 @@ void Game::UpdateEnemies(float deltaTime)
 				if (Random(1, 1000) < enemySpawnChance)
 				{
 					// Spawn enemy randomly on the Y axis
-					enemies[i].SetPosition(SCREEN_WIDTH, Random(SCREEN_BOUNDARY_TOP, SCREEN_HEIGHT - enemies[i].GetSize().y));
-					enemies[i].ResetHealth();
-					enemies[i].SetActive();
+					enemy.SetPosition(SCREEN_WIDTH, Random(SCREEN_BOUNDARY_TOP, SCREEN_HEIGHT - enemy.GetSize().y));
+					enemy.ResetHealth();
+					enemy.SetActive();
 				}
 
 				spawnTimer = 0.0f;
@@ -453,27 +473,24 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 			}
 
 			// Check if the projectile has hit any of the enemies on screen
-			for (int j = 0; j < enemies.size(); j++)
+			for (Enemy &enemy : enemies)
 			{
-				if (enemies[j].IsActive() && projectile.Collides(enemies[j]))
+				if (enemy.IsActive() && projectile.Collides(enemy))
 				{
-					enemies[j].ApplyDamage(projectile.GetDamage());
+					enemy.ApplyDamage(projectile.GetDamage());
 
-					if (enemies[j].GetHealth() <= 0.0f)
+					// Enemy was destroyed
+					if (enemy.GetHealth() <= 0.0f)
 					{
-						enemies[j].SetActive(false);
-
-						player.AddScore(enemies[j].GetPoints());
-
-						// Draw an explosion where the enemy was destroyed
-						m_Explosions.push_back(explosionSprite);
-						m_Explosions.back().SetPosition(
-							enemies[j].GetPosition().x,
-							enemies[j].GetPosition().y);
+						enemy.SetActive(false);
+						player.AddScore(enemy.GetPoints());
+						DrawExplosion(enemy.GetPosition());
+						m_KillCount++;
 					}
 
 					projectile.SetFiringState(false);
 
+					// Projectile hit an enemy and was destroyed, no need to check if it's colliding with any more enemies
 					break;
 				}
 			}
@@ -481,7 +498,7 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 	}
 }
 
-bool Game::UpdateEnemyProjectiles(float deltaTime)
+void Game::UpdateEnemyProjectiles(float deltaTime)
 {
 	for (Projectile& projectile : enemyProjectiles)
 	{
@@ -504,36 +521,33 @@ bool Game::UpdateEnemyProjectiles(float deltaTime)
 					player.DecrementLives();
 					player.SetActive(false);
 					DrawExplosion(player.GetPosition());
-					ResetGameObjects();
-					return true;
+					ResetEnemies();
+					m_bPlayerDied = true;;
 				}
 
 				projectile.SetFiringState(false);
 			}
 		}
 	}
-
-	return false;
 }
 
 void Game::IncreaseDifficulty()
 {
-	if (enemies.size() < MAX_ENEMIES)
-	{
-		if (enemies.size() <= 5)
-			enemies.push_back(Enemy(ENEMY_SPITFIRE));
-		else if (enemies.size() <= 8)
-			enemies.push_back(Enemy(ENEMY_BIPLANE));
-		else if (enemies.size() <= 10)
-			enemies.push_back(Enemy(ENEMY_GUNSHIP));
-	}
+	if (enemies.size() <= 5)
+		enemies.push_back(Enemy(ENEMY_SPITFIRE));
+	else if (enemies.size() <= 8)
+		enemies.push_back(Enemy(ENEMY_BIPLANE));
+	else if (enemies.size() <= 10)
+		enemies.push_back(Enemy(ENEMY_GUNSHIP));
 	
 }
 
 void Game::RenderGame()
 {
 	scoreDisplay.Render(m_pRenderer);
+	killCountDisplay.Render(m_pRenderer);
 
+	// Render player life icons
 	for (char i = 0; i < player.GetLives(); i++)
 		m_PlayerLifeIcons[i].Render(m_pRenderer);
 
@@ -542,6 +556,7 @@ void Game::RenderGame()
 		if (enemy.IsActive())
 			enemy.Render(m_pRenderer);
 
+	// Render enemy health displays
 	for (Enemy &enemy : enemies)
 		if (enemy.IsActive())
 			enemy.RenderHealthDisplay(m_pRenderer);
@@ -551,6 +566,7 @@ void Game::RenderGame()
 		if (proj.IsFiring())
 			proj.Render(m_pRenderer);
 
+	// Render player
 	if (player.IsActive())
 	{
 		player.Render(m_pRenderer);
@@ -563,8 +579,8 @@ void Game::RenderGame()
 			proj.Render(m_pRenderer);
 
 	// Render explosions
-	for (auto it = m_Explosions.begin(); it != m_Explosions.end(); it++)
-		it->Render(m_pRenderer);
+	for (SpriteAnimation &explosion : m_Explosions)
+		explosion.Render(m_pRenderer);
 }
 
 void Game::RenderGameOverScreen()
@@ -590,20 +606,29 @@ Projectile& Game::GetProjectile(std::vector<Projectile> &projectiles)
 
 void Game::ResetGameObjects()
 {
+	ResetEnemies();
+	ResetAllProjectiles();
+
+	player.ResetHealth();
+	player.SetPosition(0, HALF_SCREEN_HEIGHT);
+}
+
+void Game::ResetEnemies()
+{
 	for (Enemy &enemy : enemies)
 	{
 		enemy.ResetHealth();
 		enemy.SetActive(false);
 	}
+}
 
+void Game::ResetAllProjectiles()
+{
 	for (Projectile &proj : playerProjectiles)
 		proj.SetFiringState(false);
 
 	for (Projectile &proj : enemyProjectiles)
 		proj.SetFiringState(false);
-
-	player.ResetHealth();
-	player.SetPosition(0, HALF_SCREEN_HEIGHT);
 }
 
 bool Game::OnKeyPressed(int keycode)
@@ -639,21 +664,28 @@ bool Game::OnKeyPressed(int keycode)
 
 void Game::DrawExplosion(Vec2<float> &position)
 {
-	m_Explosions.push_back(explosion);
+	m_Explosions.push_back(explosionFrames);
 
 	m_Explosions.back().SetPosition(position);
 }
 
-//void Game::Wait(float time)
-//{
-//	if (!m_bWait)
-//		return;
-//
-//	static float waitTime = 0.0f;
-//
-//	waitTime += time;
-//	if (waitTime > 3.0f)
-//	{
-//		m_bWait = false;
-//	}
-//}
+void Game::RespawnPlayer(float time)
+{
+	if (!m_bPlayerDied)
+		return;
+
+	static float waitTime = 0.0f;
+
+	waitTime += m_deltaTime;
+	if (waitTime > time)
+	{
+		player.SetActive();
+		player.ResetHealth();
+		player.SetPosition(0, HALF_SCREEN_HEIGHT);
+
+		ResetAllProjectiles();
+
+		m_bPlayerDied = false;
+		waitTime = 0.0f;
+	}
+}
