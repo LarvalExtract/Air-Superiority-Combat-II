@@ -14,12 +14,18 @@ public:
 	void RenderHealthDisplay(ASCIIRenderer* pRenderer);
 
 	void ApplyDamage(float damage);
+
 	float GetHealth() const { return m_Health; }
+	float GetMaxHealth() const { return m_MaxHealth; }
+	float GetSpeed() const { return m_Speed; }
+
 	void SetMaxHealth(float value);
 	void ResetHealth();
 
-	void SetActive(bool value = true) { m_bActive = value; }
+	void SetActive(bool value = true) { m_bActive = value; m_TimeSinceLastShot = 0.0f; }
 	bool IsActive() const { return m_bActive; }
+
+	void SetPosition(float x, float y);
 
 protected:
 	Plane() : m_Health(0), m_Speed(0.0f), m_bActive(false), m_TookDamage(false), m_TimeSinceLastShot(0.0f) {}
@@ -36,4 +42,6 @@ protected:
 
 	float m_ShootCooldown;
 	float m_TimeSinceLastShot;
+
+	static float s_deltaTime;
 };

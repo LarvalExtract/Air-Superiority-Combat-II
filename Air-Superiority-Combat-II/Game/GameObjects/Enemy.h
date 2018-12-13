@@ -35,8 +35,6 @@ private:
 	unsigned int m_Points;
 	EnemyType m_Type;
 
-	static float s_DeltaTime;
-
 	static char s_biplaneRounds;
 	static char s_mediumFireChance;
 	static float s_gunshipFireRate;

@@ -41,6 +41,7 @@ public:
 private:
 	bool m_bInitialised;
 	bool m_bExitApp;
+	bool m_bWait;
 
 	//Functions
 	void InitialiseGame();
@@ -72,8 +73,8 @@ private:
 	// Update state of all player projectiles on screen
 	void UpdatePlayerProjectiles(float deltaTime);
 
-	// Update state of all enemy projectiles on screen
-	void UpdateEnemyProjectiles(float deltaTime);
+	// Update state of all enemy projectiles on screen. Returns true if player was destroyed
+	bool UpdateEnemyProjectiles(float deltaTime);
 
 	void IncreaseDifficulty();
 
@@ -81,7 +82,10 @@ private:
 	void RenderGame();
 	void RenderGameOverScreen();
 
+	void ResetGameObjects();
 	bool OnKeyPressed(int keycode);
+	void DrawExplosion(Vec2<float> &position);
+	//void Wait();
 
 	//Variables
 	ASCIIRenderer* m_pRenderer;
@@ -92,11 +96,8 @@ private:
 
 	std::vector<SpriteAnimation> m_Explosions;
 
-	// Returns the first inactive player projectile
-	Projectile& GetPlayerProjectile();
-
-	// Returns the first inactive enemy projectile
-	Projectile& GetEnemyProjectile();
+	// Returns the first inactive projectile from vector of projectiles
+	Projectile& GetProjectile(std::vector<Projectile> &projectiles);
 
 	Player player;
 	std::vector<Enemy> enemies;

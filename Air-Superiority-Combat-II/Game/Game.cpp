@@ -45,6 +45,7 @@ Game::Game() :
 	m_pRenderer(NULL),
 	m_bInitialised(false),
 	m_bExitApp(false),
+	m_bWait(false),
 	clouds(SCREEN_WIDTH, SCREEN_HEIGHT),
 	m_GameState(E_GAME_STATE_MAIN_MENU),
 	enemies(3),
@@ -142,7 +143,9 @@ void Game::Run()
 void Game::InitialiseGame()
 {
 	// Reset player state
+	player.SetActive(true);
 	player.SetPosition(0, HALF_SCREEN_HEIGHT - player.GetSize().y / 2);
+	player.SetMaxLives(MAX_PLAYER_LIVES);
 	player.SetLives(MAX_PLAYER_LIVES);
 	player.SetScore(0);
 	
@@ -273,6 +276,8 @@ void Game::UpdatePauseMenu()
 
 void Game::UpdateGame(float deltaTime)
 {
+	static bool wait = false;
+
 	if (player.GetLives() <= 0)
 	{
 		m_GameState = E_GAME_STATE_GAME_OVER;
@@ -287,6 +292,29 @@ void Game::UpdateGame(float deltaTime)
 		return;
 	}
 
+	for (auto it = m_Explosions.begin(); it != m_Explosions.end(); )
+	{
+		it->Update(deltaTime);
+
+		// Remove explosion after it's played once
+		it->GetLoopCount() > 0 ? it = m_Explosions.erase(it) : it++;
+	}
+
+	if (wait)
+	{
+		static float waitTime = 0.0f;
+		waitTime += deltaTime;
+
+		if (waitTime > 3.0f)
+		{
+			player.SetActive(true);
+			wait = false;
+			waitTime = 0.0f;
+		}
+
+		return;
+	}
+
 	// Make the game harder every 30 seconds
 	if (roundTimer.Elapsed() > 10.0f)
 	{
@@ -298,21 +326,11 @@ void Game::UpdateGame(float deltaTime)
 	UpdateEnemies(deltaTime);
 
 	UpdatePlayerProjectiles(deltaTime);
-	UpdateEnemyProjectiles(deltaTime);
-
-	for (auto it = m_Explosions.begin(); it != m_Explosions.end(); )
-	{
-		it->Update(deltaTime);
-
-		// Remove explosion after it's played once
-		it->GetLoopCount() > 0 ? it = m_Explosions.erase(it) : it++;
-	}
+	wait = UpdateEnemyProjectiles(deltaTime);
 
 	static int lastScore = 0;
-
 	if (player.GetScore() > lastScore)
 		scoreDisplay.SetText(std::to_string(player.GetScore()));
-
 	lastScore = player.GetScore();
 }
 
@@ -339,10 +357,24 @@ void Game::UpdateGameOverScreen(float deltaTime)
 
 void Game::UpdatePlayer(float deltaTime)
 {
-	player.Update(deltaTime);
+	// Move player down
+	if (GetKeyState(VK_DOWN) < 0)
+		player.SetPosition(player.GetPosition().x, player.GetPosition().y + player.GetSpeed() * deltaTime);
+
+	// Move player up
+	if (GetKeyState(VK_UP) < 0)
+		player.SetPosition(player.GetPosition().x, player.GetPosition().y - player.GetSpeed() * deltaTime);
+
+	// Move player left
+	if (GetKeyState(VK_LEFT) < 0)
+		player.SetPosition(player.GetPosition().x - player.GetSpeed() * deltaTime, player.GetPosition().y);
+
+	// Move player right
+	if (GetKeyState(VK_RIGHT) < 0)
+		player.SetPosition(player.GetPosition().x + player.GetSpeed() * deltaTime, player.GetPosition().y);
 
 	if (player.ShouldFire())
-		player.Shoot(GetPlayerProjectile());
+		player.Shoot(GetProjectile(playerProjectiles));
 
 	// Prevent player from going above the screen
 	if (player.GetPosition().y < SCREEN_BOUNDARY_TOP)
@@ -359,6 +391,8 @@ void Game::UpdatePlayer(float deltaTime)
 	// Prevent player from going too far right
 	else if (player.GetPosition().x > SCREEN_BOUNDARY_RIGHT)
 		player.SetPosition(SCREEN_BOUNDARY_RIGHT, player.GetPosition().y);
+
+	player.Update(deltaTime);
 }
 
 void Game::UpdateEnemies(float deltaTime)
@@ -371,10 +405,10 @@ void Game::UpdateEnemies(float deltaTime)
 			enemies[i].Update(deltaTime);
 
 			if (enemies[i].ShouldFire())
-				enemies[i].Shoot(GetEnemyProjectile());
+				enemies[i].Shoot(GetProjectile(enemyProjectiles));
 
-			// Check if enemy has escaped screen
-			else if (enemies[i].GetPosition().x + enemies[i].GetSize().x < 0)
+			// Check if enemy has reached left side of screen
+			else if (enemies[i].GetPosition().x < 0)
 			{
 				enemies[i].SetActive(false);
 				player.DecrementLives();
@@ -425,7 +459,7 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 				{
 					enemies[j].ApplyDamage(projectile.GetDamage());
 
-					if (enemies[j].GetHealth() <= 0)
+					if (enemies[j].GetHealth() <= 0.0f)
 					{
 						enemies[j].SetActive(false);
 
@@ -447,7 +481,7 @@ void Game::UpdatePlayerProjectiles(float deltaTime)
 	}
 }
 
-void Game::UpdateEnemyProjectiles(float deltaTime)
+bool Game::UpdateEnemyProjectiles(float deltaTime)
 {
 	for (Projectile& projectile : enemyProjectiles)
 	{
@@ -463,13 +497,23 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 
 			else if (projectile.Collides(player))
 			{
-				player.ApplyDamage(1);
-				//player.DecrementLives();
+				player.ApplyDamage(projectile.GetDamage());
+				
+				if (player.GetHealth() <= 0.0f)
+				{
+					player.DecrementLives();
+					player.SetActive(false);
+					DrawExplosion(player.GetPosition());
+					ResetGameObjects();
+					return true;
+				}
 
 				projectile.SetFiringState(false);
 			}
 		}
 	}
+
+	return false;
 }
 
 void Game::IncreaseDifficulty()
@@ -493,8 +537,6 @@ void Game::RenderGame()
 	for (char i = 0; i < player.GetLives(); i++)
 		m_PlayerLifeIcons[i].Render(m_pRenderer);
 
-	player.Render(m_pRenderer);
-
 	// Render enemies
 	for (Enemy &enemy : enemies)
 		if (enemy.IsActive())
@@ -509,7 +551,11 @@ void Game::RenderGame()
 		if (proj.IsFiring())
 			proj.Render(m_pRenderer);
 
-	player.RenderHealthDisplay(m_pRenderer);
+	if (player.IsActive())
+	{
+		player.Render(m_pRenderer);
+		player.RenderHealthDisplay(m_pRenderer);
+	}
 
 	// Render enemy projectiles
 	for (Projectile &proj : enemyProjectiles)
@@ -531,24 +577,33 @@ void Game::RenderGameOverScreen()
 	pressEsc.Render(m_pRenderer);
 }
 
-Projectile& Game::GetPlayerProjectile()
+Projectile& Game::GetProjectile(std::vector<Projectile> &projectiles)
 {
-	for (Projectile& projectile : playerProjectiles)
+	for (Projectile& projectile : projectiles)
 		if (!projectile.IsFiring())
 			return projectile;
 
-	playerProjectiles.push_back(Projectile());
-	return playerProjectiles.back();
+	// All projectiles were active, add a new one and return that
+	projectiles.push_back(Projectile());
+	return projectiles.back();
 }
 
-Projectile& Game::GetEnemyProjectile()
+void Game::ResetGameObjects()
 {
-	for (Projectile& projectile : enemyProjectiles)
-		if (!projectile.IsFiring())
-			return projectile;
+	for (Enemy &enemy : enemies)
+	{
+		enemy.ResetHealth();
+		enemy.SetActive(false);
+	}
 
-	enemyProjectiles.push_back(Projectile());
-	return enemyProjectiles.back();
+	for (Projectile &proj : playerProjectiles)
+		proj.SetFiringState(false);
+
+	for (Projectile &proj : enemyProjectiles)
+		proj.SetFiringState(false);
+
+	player.ResetHealth();
+	player.SetPosition(0, HALF_SCREEN_HEIGHT);
 }
 
 bool Game::OnKeyPressed(int keycode)
@@ -581,3 +636,24 @@ bool Game::OnKeyPressed(int keycode)
 	m_Keys[index] = false;
 	return false;
 }
+
+void Game::DrawExplosion(Vec2<float> &position)
+{
+	m_Explosions.push_back(explosion);
+
+	m_Explosions.back().SetPosition(position);
+}
+
+//void Game::Wait(float time)
+//{
+//	if (!m_bWait)
+//		return;
+//
+//	static float waitTime = 0.0f;
+//
+//	waitTime += time;
+//	if (waitTime > 3.0f)
+//	{
+//		m_bWait = false;
+//	}
+//}

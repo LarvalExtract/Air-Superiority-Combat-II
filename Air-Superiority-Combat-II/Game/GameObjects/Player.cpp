@@ -9,10 +9,12 @@ Player::Player() :
 	m_MaxLives(3)
 {
 	SetTexture(TGAFile("player.tga"));
-	m_MaxHealth = 500.0f;
+	SetMaxHealth(500.0f);
 	m_Health = m_MaxHealth;
 	m_Speed = 150.0f;
 	m_ShootCooldown = 0.15f;
+
+	ResetHealth();
 }
 
 void Player::SetLives(unsigned char lives)
@@ -42,23 +44,6 @@ void Player::DecrementLives()
 		m_Lives = 0;
 }
 
-void Player::Update(float deltaTime)
-{
-	Plane::Update(deltaTime);
-
-	if (GetKeyState(VK_DOWN) < 0)
-		m_Position.y += m_Speed * deltaTime;
-
-	if (GetKeyState(VK_UP) < 0)
-		m_Position.y -= m_Speed * deltaTime;
-
-	if (GetKeyState(VK_LEFT) < 0)
-		m_Position.x -= m_Speed * deltaTime;
-
-	if (GetKeyState(VK_RIGHT) < 0)
-		m_Position.x += m_Speed * deltaTime;
-}
-
 bool Player::ShouldFire()
 {
 	static bool bSpaceIsPressed = false;	// Prevents holding space to shoot
@@ -80,6 +65,7 @@ bool Player::ShouldFire()
 		bSpaceIsPressed = false;
 	}
 
+	m_TimeSinceLastShot += s_deltaTime;
 	return false;
 }
 
@@ -87,5 +73,6 @@ void Player::Shoot(Projectile &proj)
 {
 	proj.SetPosition(m_Position.x + GetSize().x, (GetPosition().y + (GetSize().y / 2)) - proj.GetSize().y / 2);
 	proj.SetVelocity(Vec2<float>(400.0f, 0.0f));
+	proj.SetDamage(100.0f);
 	proj.SetFiringState(true);
 }

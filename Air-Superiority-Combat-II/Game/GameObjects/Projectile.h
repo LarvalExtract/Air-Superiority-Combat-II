@@ -10,8 +10,10 @@ public:
 	~Projectile();
 
 	void Update(float deltaTime);
-	void SetFiringState(bool state) { m_bIsFiring = state; }
+
+	void SetDamage(float damage) { m_Damage = damage; }
 	void SetVelocity(Vec2<float> velocity) { m_Velocity = velocity; }
+	void SetFiringState(bool state) { m_bIsFiring = state; }
 
 	bool IsFiring() const { return m_bIsFiring; }
 

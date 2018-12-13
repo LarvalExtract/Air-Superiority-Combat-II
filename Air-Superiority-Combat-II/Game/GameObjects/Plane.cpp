@@ -1,6 +1,8 @@
 #include "Plane.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
+float Plane::s_deltaTime = 0.0f;
+
 void Plane::ApplyDamage(float damage)
 {
 	m_Health -= damage;
@@ -11,6 +13,13 @@ void Plane::ApplyDamage(float damage)
 	m_HealthDisplay.SetValue(m_Health);
 }
 
+void Plane::SetPosition(float x, float y)
+{
+	Sprite::SetPosition(x, y);
+
+	m_HealthDisplay.SetPosition((m_Position.x + GetSize().x / 2) - m_HealthDisplay.GetSize().x / 2, m_Position.y - 3);
+}
+
 void Plane::SetMaxHealth(float value)
 {
 	m_MaxHealth = value;
@@ -19,8 +28,9 @@ void Plane::SetMaxHealth(float value)
 
 void Plane::Update(float deltaTime)
 {
-	m_HitTime += deltaTime;
-	m_TimeSinceLastShot += deltaTime;
+	s_deltaTime = deltaTime;
+
+	m_HitTime += s_deltaTime;
 
 	if (m_HitTime > 0.05f)
 		ClearPixelOverrideColour();

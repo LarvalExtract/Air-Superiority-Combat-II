@@ -2,10 +2,8 @@
 #include "Core/Utils.h"
 #include "Projectile.h"
 
-float Enemy::s_DeltaTime = 0.0f;
-
 char	Enemy::s_biplaneRounds = 3;
-char	Enemy::s_mediumFireChance = 10;
+char	Enemy::s_mediumFireChance = 15;
 float	Enemy::s_gunshipFireRate = 3.0f;
 
 Texture s_spitfireTexture(TGAFile("enemy3.tga"));
@@ -31,42 +29,32 @@ void Enemy::SetEnemyType(EnemyType type)
 	{
 	case ENEMY_BIPLANE:
 		SetTexture(s_biplaneTexture);
-		m_MaxHealth = 500.0f;
+		SetMaxHealth(500.0f);
 		m_Speed = 75.0f;
 		m_Points = 20;
 		break;
 
 	case ENEMY_SPITFIRE:
 		SetTexture(s_spitfireTexture);
-		m_MaxHealth = 300.0f;
+		SetMaxHealth(300.0f);
 		m_Speed = 60.0f;
 		m_Points = 10;
 		break;
 
 	case ENEMY_GUNSHIP:
 		SetTexture(s_gunshipTexture);
-		m_MaxHealth = 1000.0f;
+		SetMaxHealth(1000.0f);
 		m_Speed = 35.0f;
 		m_Points = 50;
 		break;
 	}
 
-	m_HealthDisplay.SetMaximumValue(m_MaxHealth);
 	ResetHealth();
 }
 
 void Enemy::Update(float deltaTime)
 {
 	Plane::Update(deltaTime);
-
-	Enemy::s_DeltaTime = deltaTime;
-
-	switch (m_Type)
-	{
-	case ENEMY_SPITFIRE:	break;
-	case ENEMY_BIPLANE:		UpdateBiplane(deltaTime); break;
-	case ENEMY_GUNSHIP:		break;
-	}
 
 	m_Position.x -= m_Speed * deltaTime;
 }
@@ -89,14 +77,17 @@ void Enemy::Shoot(Projectile &proj)
 	case ENEMY_SPITFIRE:	
 		proj.SetTexture(Projectile::s_enemyProjectile1);
 		proj.SetVelocity(Vec2<float>(-150.0f, 0.0f));
+		proj.SetDamage(90.0f);
 		break;
 	case ENEMY_BIPLANE:		
 		proj.SetTexture(Projectile::s_enemyProjectile2);
 		proj.SetVelocity(Vec2<float>(-170.0f, 0.0f));
+		proj.SetDamage(40.0f);
 		break;
 	case ENEMY_GUNSHIP:		
 		proj.SetTexture(Projectile::s_enemyProjectile2);
 		proj.SetVelocity(Vec2<float>(-125.0f, 0.0f));
+		proj.SetDamage(125.0f);
 		break;
 	}
 
@@ -113,10 +104,10 @@ bool Enemy::FireSpitfire()
 			m_TimeSinceLastShot = 0.0f;
 			return true;
 		}
-
 		m_TimeSinceLastShot = 0.0f;
 	}
 
+	m_TimeSinceLastShot += s_deltaTime;
 	return false;
 }
 
@@ -124,9 +115,10 @@ bool Enemy::FireBiplane()
 {
 	static float bulletTime = 0.0f;
 
-	bulletTime += s_DeltaTime;
+	bulletTime += s_deltaTime;
+	m_TimeSinceLastShot += s_deltaTime;
 
-	if (m_TimeSinceLastShot > 5.0f)
+	if (m_TimeSinceLastShot > 3.0f)
 	{
 		if (s_biplaneRounds > 0)
 		{
@@ -136,7 +128,6 @@ bool Enemy::FireBiplane()
 				bulletTime = 0.0f;
 				return true;
 			}
-
 			return false;
 		}
 		else
@@ -156,13 +147,9 @@ bool Enemy::FireGunship()
 		m_TimeSinceLastShot = 0.0f;
 		return true;
 	}
-
-	return false;
-}
-
-void Enemy::UpdateBiplane(float deltaTime)
-{
-	static float counter = 0.0f;
-
-	counter += 0.05f;
+	else
+	{
+		m_TimeSinceLastShot += s_deltaTime;
+		return false;
+	}
 }

@@ -10,8 +10,6 @@ public:
 	Player();
 	~Player() {}
 
-	void Update(float deltaTime);
-
 	bool ShouldFire() override;
 	void Shoot(Projectile &proj);
 
@@ -25,11 +23,6 @@ public:
 
 	void IncrementLives();
 	void DecrementLives();
-
-	void MoveUp(float deltaTime) { m_Position.y -= m_Speed * deltaTime; }
-	void MoveDown(float deltaTime) { m_Position.y += m_Speed * deltaTime; }
-	void MoveRight(float deltaTime) { m_Position.x += m_Speed * deltaTime; }
-	void MoveLeft(float deltaTime) { m_Position.x -= m_Speed * deltaTime; }
 
 	void AddScore(unsigned int score) { m_Score += score; }
 
