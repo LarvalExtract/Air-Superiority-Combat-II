@@ -77,14 +77,14 @@
     <ClCompile Include="Core\Renderer\Sprite.cpp" />
     <ClCompile Include="Game\GameObjects\Enemy.cpp" />
     <ClCompile Include="Game\Game.cpp" />
-    <ClCompile Include="HealthDisplay.cpp" />
+    <ClCompile Include="Game\GameObjects\HealthDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Game\GameObjects\Menu.cpp" />
     <ClCompile Include="Game\GameObjects\Player.cpp" />
     <ClCompile Include="Game\GameObjects\Projectile.cpp" />
     <ClCompile Include="Game\GameObjects\Plane.cpp" />
     <ClCompile Include="Core\Renderer\SpriteAnimation.cpp" />
-    <ClCompile Include="Core\Renderer\SpriteText.cpp" />
+    <ClCompile Include="Game\GameObjects\DigitDisplay.cpp" />
     <ClCompile Include="Core\Texture.cpp" />
     <ClCompile Include="Core\TextureArray.cpp" />
     <ClCompile Include="Core\TGAFile.cpp" />
@@ -105,13 +105,13 @@
     <ClInclude Include="Game\GameObjects\Player.h" />
     <ClInclude Include="Game\GameObjects\Projectile.h" />
     <ClInclude Include="Core\Renderer\SpriteAnimation.h" />
-    <ClInclude Include="Core\Renderer\SpriteText.h" />
+    <ClInclude Include="Game\GameObjects\DigitDisplay.h" />
     <ClInclude Include="Core\Texture.h" />
     <ClInclude Include="Core\TextureArray.h" />
     <ClInclude Include="Core\TGAFile.h" />
     <ClInclude Include="Core\Timer.h" />
     <ClInclude Include="Core\Maths\Vec2.h" />
-    <ClInclude Include="HealthDisplay.h" />
+    <ClInclude Include="Game\GameObjects\HealthDisplay.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

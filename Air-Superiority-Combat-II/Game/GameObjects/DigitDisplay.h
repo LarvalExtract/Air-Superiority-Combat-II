@@ -1,28 +1,29 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
 #include "Core/Renderer/Sprite.h"
 
-class SpriteText
+class DigitDisplay
 {
 public:
-	SpriteText() : m_Position(0, 0), m_Size(0, 0), m_Spacing(1) {}
+	DigitDisplay() : m_Position(0, 0), m_Size(0, 0), m_Spacing(1) {}
 
 	static void Initialise();
+
 	void SetPosition(int x, int y);
 	void SetSpacing(int spacing);
 
-	void SetText(const std::string &text);
+	void SetNumber(unsigned int number);
 	void Render(ASCIIRenderer* pRenderer);
 
 	Vec2<int> GetSize();
 
 private:
 	static bool bInitialised;
-	static std::map<char, Texture> characters;
+	static std::unordered_map<char, Texture> characters;
 
 	std::vector<Sprite> m_Sprites;
 	std::string m_Text;

@@ -7,7 +7,7 @@
 #include "GameObjects/Projectile.h"
 #include "GameObjects/Background.h"
 #include "GameObjects/Menu.h"
-#include "Core/Renderer/SpriteText.h"
+#include "Game/GameObjects/DigitDisplay.h"
 #include "Core/Renderer/SpriteAnimation.h"
 #include "Core/Timer.h"
 
@@ -119,8 +119,8 @@ private:
 	Sprite highScore;
 	Sprite pressEsc;
 
-	SpriteText scoreDisplay;
-	SpriteText killCountDisplay;
+	DigitDisplay scoreDisplay;
+	DigitDisplay killCountDisplay;
 	SpriteAnimation explosionSprite;
 	std::vector<Sprite> m_PlayerLifeIcons;
 

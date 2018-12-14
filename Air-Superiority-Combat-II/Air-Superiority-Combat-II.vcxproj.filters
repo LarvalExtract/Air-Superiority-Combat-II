@@ -41,16 +41,16 @@
     <ClCompile Include="Core\Texture.cpp">
       <Filter>Core\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Renderer\SpriteText.cpp">
-      <Filter>Core\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Renderer\Sprite.cpp">
       <Filter>Core\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Core\TGAFile.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="HealthDisplay.cpp">
+    <ClCompile Include="Game\GameObjects\HealthDisplay.cpp">
+      <Filter>Game\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameObjects\DigitDisplay.cpp">
       <Filter>Game\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,9 +100,6 @@
     <ClInclude Include="Core\Texture.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Renderer\SpriteText.h">
-      <Filter>Core\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Renderer\ConsoleColours.h">
       <Filter>Core\Renderer</Filter>
     </ClInclude>
@@ -118,7 +115,10 @@
     <ClInclude Include="Core\Timer.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="HealthDisplay.h">
+    <ClInclude Include="Game\GameObjects\HealthDisplay.h">
+      <Filter>Game\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameObjects\DigitDisplay.h">
       <Filter>Game\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>

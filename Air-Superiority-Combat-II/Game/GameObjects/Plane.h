@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Renderer/Sprite.h"
-#include "../../HealthDisplay.h"
+#include "HealthDisplay.h"
 
 class Plane : public Sprite
 {

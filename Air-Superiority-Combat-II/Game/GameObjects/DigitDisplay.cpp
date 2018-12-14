@@ -1,10 +1,10 @@
-#include "SpriteText.h"
+#include "DigitDisplay.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
-std::map<char, Texture> SpriteText::characters;
-bool SpriteText::bInitialised = false;
+std::unordered_map<char, Texture> DigitDisplay::characters;
+bool DigitDisplay::bInitialised = false;
 
-void SpriteText::Initialise()
+void DigitDisplay::Initialise()
 {
 	if (!bInitialised)
 	{
@@ -25,24 +25,26 @@ void SpriteText::Initialise()
 	}
 }
 
-void SpriteText::SetText(const std::string &text)
+void DigitDisplay::SetNumber(unsigned int number)
 {
 	if (!bInitialised)
 		return;
 
-	m_Sprites.clear();
-	m_Sprites.reserve(text.size());
+	m_Text = std::to_string(number);
 
-	for (int i = 0; i < text.size(); i++)
+	m_Sprites.clear();
+	m_Sprites.reserve(m_Text.size());
+
+	for (int i = 0; i < m_Text.size(); i++)
 	{
 		m_Sprites.push_back(Sprite());
-		m_Sprites[i].SetTexture(characters[text[i]]);
+		m_Sprites[i].SetTexture(characters[m_Text[i]]);
 	}
 
 	SetPosition(m_Position.x, m_Position.y);
 }
 
-void SpriteText::SetPosition(int x, int y)
+void DigitDisplay::SetPosition(int x, int y)
 {
 	if (!bInitialised)
 		return;
@@ -64,7 +66,7 @@ void SpriteText::SetPosition(int x, int y)
 	}
 }
 
-void SpriteText::SetSpacing(int spacing)
+void DigitDisplay::SetSpacing(int spacing)
 {
 	if (!bInitialised)
 		return;
@@ -74,7 +76,7 @@ void SpriteText::SetSpacing(int spacing)
 	SetPosition(m_Position.x, m_Position.y);
 }
 
-void SpriteText::Render(ASCIIRenderer* pRenderer)
+void DigitDisplay::Render(ASCIIRenderer* pRenderer)
 {
 	if (!bInitialised)
 		return;
@@ -85,7 +87,7 @@ void SpriteText::Render(ASCIIRenderer* pRenderer)
 	}
 }
 
-Vec2<int> SpriteText::GetSize()
+Vec2<int> DigitDisplay::GetSize()
 {
 	if (!bInitialised)
 		return Vec2<int>(0, 0);

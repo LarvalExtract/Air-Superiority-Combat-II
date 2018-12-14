@@ -2,16 +2,15 @@
 #include "Core/Utils.h"
 #include "Projectile.h"
 
-char	Enemy::s_biplaneRounds = 3;
-char	Enemy::s_mediumFireChance = 15;
-float	Enemy::s_gunshipFireRate = 2.0f;
-
 Texture s_spitfireTexture(TGAFile("enemy3.tga"));
 Texture s_biplaneTexture(TGAFile("enemy2.tga"));
 Texture s_gunshipTexture(TGAFile("enemy5.tga"));
 
 Enemy::Enemy(EnemyType type) :
-	m_Type(type)
+	m_Type(type),
+	m_biplaneRounds(0),
+	m_spitfireFireChance(0),
+	m_gunshipFireRate(0.0f)
 {
 	SetEnemyType(type);
 }
@@ -32,6 +31,7 @@ void Enemy::SetEnemyType(EnemyType type)
 		SetMaxHealth(500.0f);
 		m_Speed = 75.0f;
 		m_Points = 20;
+		m_biplaneRounds = 3;	// Biplanes fire in 3 round bursts
 		break;
 
 	case ENEMY_SPITFIRE:
@@ -39,6 +39,7 @@ void Enemy::SetEnemyType(EnemyType type)
 		SetMaxHealth(300.0f);
 		m_Speed = 60.0f;
 		m_Points = 10;
+		m_spitfireFireChance = 15;	// Spitfire has a 15% chance of firing
 		break;
 
 	case ENEMY_GUNSHIP:
@@ -46,6 +47,7 @@ void Enemy::SetEnemyType(EnemyType type)
 		SetMaxHealth(1000.0f);
 		m_Speed = 35.0f;
 		m_Points = 50;
+		m_gunshipFireRate = 3.0f;	// Enemy gunship fires a shot every 3 seconds
 		break;
 	}
 
@@ -99,7 +101,7 @@ bool Enemy::FireSpitfire()
 {
 	if (m_TimeSinceLastShot > 0.5f)
 	{
-		if (Random(1, 100) < s_mediumFireChance)
+		if (Random(1, 100) < m_spitfireFireChance)
 		{
 			m_TimeSinceLastShot = 0.0f;
 			return true;
@@ -120,11 +122,11 @@ bool Enemy::FireBiplane()
 
 	if (m_TimeSinceLastShot > 3.0f)
 	{
-		if (s_biplaneRounds > 0)
+		if (m_biplaneRounds > 0)
 		{
 			if (bulletTime > 0.25f)
 			{
-				s_biplaneRounds--;
+				m_biplaneRounds--;
 				bulletTime = 0.0f;
 				return true;
 			}
@@ -133,7 +135,7 @@ bool Enemy::FireBiplane()
 		else
 		{
 			m_TimeSinceLastShot = 0.0f;
-			s_biplaneRounds = 3;
+			m_biplaneRounds = 3;
 		}
 	}
 
@@ -142,14 +144,12 @@ bool Enemy::FireBiplane()
 
 bool Enemy::FireGunship()
 {
-	if (m_TimeSinceLastShot > s_gunshipFireRate)
+	if (m_TimeSinceLastShot > m_gunshipFireRate)
 	{
 		m_TimeSinceLastShot = 0.0f;
 		return true;
 	}
-	else
-	{
-		m_TimeSinceLastShot += s_deltaTime;
-		return false;
-	}
+
+	m_TimeSinceLastShot += s_deltaTime;
+	return false;
 }

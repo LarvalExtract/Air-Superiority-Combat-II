@@ -33,7 +33,7 @@ private:
 	unsigned int m_Points;
 	EnemyType m_Type;
 
-	static char s_biplaneRounds;
-	static char s_mediumFireChance;
-	static float s_gunshipFireRate;
+	char m_biplaneRounds;
+	char m_spitfireFireChance;
+	float m_gunshipFireRate;
 };

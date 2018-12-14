@@ -72,7 +72,7 @@ void Game::Initialise()
 	m_pRenderer = new ASCIIRenderer();
 	m_pRenderer->Initialise(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	SpriteText::Initialise();
+	DigitDisplay::Initialise();
 
 	mainMenu.AddMenuItem(TGAFile("ui/menu_title.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_startgame.tga"));
@@ -153,10 +153,10 @@ void Game::InitialiseGame()
 
 	m_KillCount = 0;
 	
-	scoreDisplay.SetText(std::to_string(player.GetScore()));
+	scoreDisplay.SetNumber(player.GetScore());
 	scoreDisplay.SetPosition(10, 5);
 
-	killCountDisplay.SetText(std::to_string(m_KillCount));
+	killCountDisplay.SetNumber(m_KillCount);
 	killCountDisplay.SetPosition(SCREEN_WIDTH - 100, 5);
 
 	// Reset player projectiles
@@ -345,12 +345,12 @@ void Game::UpdateGame(float deltaTime)
 
 	static int lastScore = 0;
 	if (player.GetScore() > lastScore)
-		scoreDisplay.SetText(std::to_string(player.GetScore()));
+		scoreDisplay.SetNumber(player.GetScore());
 	lastScore = player.GetScore();
 
 	static int lastKillCount = 0;
 	if (m_KillCount > lastKillCount)
-		killCountDisplay.SetText(std::to_string(m_KillCount));
+		killCountDisplay.SetNumber(m_KillCount);
 	lastKillCount = m_KillCount;
 }
 
