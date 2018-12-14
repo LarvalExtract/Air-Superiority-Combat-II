@@ -89,7 +89,7 @@ void Enemy::Shoot(Projectile &proj)
 	case ENEMY_GUNSHIP:		
 		proj.SetTexture(Projectile::s_enemyProjectile2);
 		proj.SetVelocity(Vec2<float>(-125.0f, 0.0f));
-		proj.SetDamage(140.0f);
+		proj.SetDamage(180.0f);
 		break;
 	}
 

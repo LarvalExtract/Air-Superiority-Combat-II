@@ -11,15 +11,12 @@ enum TGAHeader
 	TGA_OFFSET_PIXELS = 18
 };
 
-
 TGAFile::TGAFile(const std::string &filePath) :
 	width(0),
 	height(0),
 	pixels(nullptr)
 {
-	const std::string SPRITE_FOLDER_PATH = "../sprites/";
-
-	std::ifstream file(SPRITE_FOLDER_PATH + filePath, std::ios::binary);
+	std::ifstream file(std::string("sprites/") + filePath, std::ios::binary);
 
 	// Error: Couldn't open TGA file
 	if (!file.is_open())
@@ -28,9 +25,11 @@ TGAFile::TGAFile(const std::string &filePath) :
 		return;
 	}
 
+	// Copy TGA header to array
 	char header[18];
 	file.read(header, 18);
 
+	// Get width and height of TGA image from buffer
 	width = *reinterpret_cast<unsigned short*>(&header[TGA_OFFSET_WIDTH]);
 	height = *reinterpret_cast<unsigned short*>(&header[TGA_OFFSET_HEIGHT]);
 

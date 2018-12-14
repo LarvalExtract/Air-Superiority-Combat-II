@@ -1,4 +1,5 @@
 ﻿#include "Game.h"
+
 #include <windows.h>
 
 #include "Core/Utils.h"
@@ -115,10 +116,8 @@ void Game::Initialise()
 	explosionSprite.SetFrameTime(0.035f);
 
 	splash.SetTexture(TGAFile("splash.tga"));
-	splash.SetPosition(HALF_SCREEN_WIDTH - splash.GetSize().x / 2, HALF_SCREEN_HEIGHT - splash.GetSize().y / 2);
 	gameOver.SetTexture(TGAFile("ui/game_over.tga"));
-	gameOver.SetPosition(HALF_SCREEN_WIDTH - gameOver.GetSize().x / 2, 10);
-
+	youWin.SetTexture(TGAFile("ui/gameover_you_win.tga"));
 	highScore.SetTexture(TGAFile("ui/gameover_high_score.tga"));
 	pressEsc.SetTexture(TGAFile("ui/gameover_press_esc.tga"));
 
@@ -145,11 +144,13 @@ void Game::Run()
 void Game::InitialiseGame()
 {
 	// Reset player state
+	m_bPlayerDied = false;
 	player.SetActive(true);
 	player.SetPosition(0, HALF_SCREEN_HEIGHT - player.GetSize().y / 2);
 	player.SetMaxLives(MAX_PLAYER_LIVES);
 	player.SetLives(MAX_PLAYER_LIVES);
 	player.SetScore(0);
+	player.ResetHealth();
 
 	m_KillCount = 0;
 	
@@ -182,12 +183,29 @@ void Game::InitialiseGame()
 
 void Game::InitialiseGameOverScreen()
 {
+	// Position "scoreDisplay" and "highScore" sprites in center of screen
 	int spacing = 8;
 	int totalWidth = highScore.GetSize().x + spacing + scoreDisplay.GetSize().x;
 	int highScorePos = HALF_SCREEN_WIDTH - totalWidth / 2;
 	int scoreDisplayPos = highScorePos + highScore.GetSize().x + spacing;
 
+	gameOver.SetPosition(HALF_SCREEN_WIDTH - gameOver.GetSize().x / 2, 10);
 	highScore.SetPosition(highScorePos, gameOver.GetPosition().y + gameOver.GetSize().y + 10);
+	scoreDisplay.SetPosition(scoreDisplayPos, highScore.GetPosition().y);
+	pressEsc.SetPosition(HALF_SCREEN_WIDTH - pressEsc.GetSize().x / 2, SCREEN_HEIGHT - 30);
+	splash.SetPosition(HALF_SCREEN_WIDTH - splash.GetSize().x / 2, HALF_SCREEN_HEIGHT - splash.GetSize().y / 2);
+}
+
+void Game::InitialiseYouWinScreen()
+{
+	// Position "scoreDisplay" and "highScore" sprites in center of screen
+	int spacing = 8;
+	int totalWidth = highScore.GetSize().x + spacing + scoreDisplay.GetSize().x;
+	int highScorePos = HALF_SCREEN_WIDTH - totalWidth / 2;
+	int scoreDisplayPos = highScorePos + highScore.GetSize().x + spacing;
+
+	youWin.SetPosition(HALF_SCREEN_WIDTH - youWin.GetSize().x / 2, 60);
+	highScore.SetPosition(highScorePos, youWin.GetPosition().y + youWin.GetSize().y + 10);
 	scoreDisplay.SetPosition(scoreDisplayPos, highScore.GetPosition().y);
 	pressEsc.SetPosition(HALF_SCREEN_WIDTH - pressEsc.GetSize().x / 2, SCREEN_HEIGHT - 30);
 }
@@ -203,6 +221,7 @@ void Game::Update(float deltaTime)
 	case E_GAME_STATE_IN_GAME:		UpdateGame(deltaTime); break;
 	case E_GAME_STATE_PAUSED:		UpdatePauseMenu(); break;
 	case E_GAME_STATE_GAME_OVER:	UpdateGameOverScreen(deltaTime); break;
+	case E_GAME_STATE_YOU_WIN:		UpdateYouWinScreen(deltaTime);
 	}
 }
 
@@ -220,6 +239,7 @@ void Game::Render()
 	case E_GAME_STATE_IN_GAME:		RenderGame(); break;
 	case E_GAME_STATE_PAUSED:		RenderGame(); pauseMenu.Render(m_pRenderer); break;
 	case E_GAME_STATE_GAME_OVER:	RenderGameOverScreen(); break;
+	case E_GAME_STATE_YOU_WIN:		RenderYouWinScreen(); break;
 	}
 
 	//call this last
@@ -299,10 +319,16 @@ void Game::UpdateGame(float deltaTime)
 	}
 	else
 	{
-		if (player.GetLives() <= 0 || m_KillCount >= 50)	// End game condition for normal game mode
+		if (player.GetLives() <= 0)
 		{
 			m_GameState = E_GAME_STATE_GAME_OVER;
 			InitialiseGameOverScreen();
+			return;
+		}
+		else if (m_KillCount == MAX_ENEMIES) // Player can win by defeating 50 enemies
+		{
+			m_GameState = E_GAME_STATE_YOU_WIN;
+			InitialiseYouWinScreen();
 			return;
 		}
 	}
@@ -315,13 +341,7 @@ void Game::UpdateGame(float deltaTime)
 		return;
 	}
 
-	for (auto it = m_Explosions.begin(); it != m_Explosions.end(); )
-	{
-		it->Update(deltaTime);
-
-		// Remove explosion after it's played once
-		it->GetLoopCount() > 0 ? it = m_Explosions.erase(it) : it++;
-	}
+	UpdateExplosionFrames(deltaTime);
 
 	// If player was destroyed, wait 2 seconds before respawning player and resuming action
 	if (m_bPlayerDied)
@@ -344,12 +364,12 @@ void Game::UpdateGame(float deltaTime)
 	UpdateEnemyProjectiles(deltaTime);
 
 	static int lastScore = 0;
-	if (player.GetScore() > lastScore)
+	if (player.GetScore() != lastScore)
 		scoreDisplay.SetNumber(player.GetScore());
 	lastScore = player.GetScore();
 
 	static int lastKillCount = 0;
-	if (m_KillCount > lastKillCount)
+	if (m_KillCount != lastKillCount)
 		killCountDisplay.SetNumber(m_KillCount);
 	lastKillCount = m_KillCount;
 }
@@ -360,6 +380,8 @@ void Game::UpdateGameOverScreen(float deltaTime)
 	{
 		m_GameState = E_GAME_STATE_MAIN_MENU;
 	}
+
+	UpdateExplosionFrames(deltaTime);
 
 	static float flashTime = 0.0f;
 	static bool bOverrideColour = true;
@@ -373,6 +395,11 @@ void Game::UpdateGameOverScreen(float deltaTime)
 		bOverrideColour = !bOverrideColour;
 		flashTime = 0.0f;
 	}
+}
+
+void Game::UpdateYouWinScreen(float deltaTime)
+{
+	UpdateGameOverScreen(deltaTime);
 }
 
 void Game::UpdatePlayer(float deltaTime)
@@ -430,8 +457,11 @@ void Game::UpdateEnemies(float deltaTime)
 			// Check if enemy has reached left side of screen
 			else if (enemy.GetPosition().x < 0)
 			{
-				enemy.SetActive(false);
 				player.DecrementLives();
+				player.SetActive(false);
+				ResetEnemies();
+				m_bPlayerDied = true;
+				return;
 			}			
 		}
 		// Enemy is ready to be spawned
@@ -522,7 +552,7 @@ void Game::UpdateEnemyProjectiles(float deltaTime)
 					player.SetActive(false);
 					DrawExplosion(player.GetPosition());
 					ResetEnemies();
-					m_bPlayerDied = true;;
+					m_bPlayerDied = true;
 				}
 
 				projectile.SetFiringState(false);
@@ -588,6 +618,17 @@ void Game::RenderGameOverScreen()
 	splash.Render(m_pRenderer);
 
 	gameOver.Render(m_pRenderer);
+	highScore.Render(m_pRenderer);
+	scoreDisplay.Render(m_pRenderer);
+	pressEsc.Render(m_pRenderer);
+}
+
+void Game::RenderYouWinScreen()
+{
+	// Render player
+	RenderGame();
+
+	youWin.Render(m_pRenderer);
 	highScore.Render(m_pRenderer);
 	scoreDisplay.Render(m_pRenderer);
 	pressEsc.Render(m_pRenderer);
@@ -667,6 +708,18 @@ void Game::DrawExplosion(Vec2<float> &position)
 	m_Explosions.push_back(explosionFrames);
 
 	m_Explosions.back().SetPosition(position);
+	m_Explosions.back().SetFrameTime(0.035f);
+}
+
+void Game::UpdateExplosionFrames(float deltaTime)
+{
+	for (auto it = m_Explosions.begin(); it != m_Explosions.end(); )
+	{
+		it->Update(deltaTime);
+
+		// Remove explosion after it's played once
+		it->GetLoopCount() > 0 ? it = m_Explosions.erase(it) : it++;
+	}
 }
 
 void Game::RespawnPlayer(float time)
@@ -682,6 +735,9 @@ void Game::RespawnPlayer(float time)
 		player.SetActive();
 		player.ResetHealth();
 		player.SetPosition(0, HALF_SCREEN_HEIGHT);
+
+		if (!m_bEndlessMode)
+			player.SetScore(0);
 
 		ResetAllProjectiles();
 

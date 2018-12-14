@@ -15,6 +15,9 @@
 
 class ASCIIRenderer;
 
+constexpr int SCREEN_WIDTH = 700;
+constexpr int SCREEN_HEIGHT = 200;
+
 enum E_KEYS
 {
 	KEY_UP,
@@ -25,9 +28,6 @@ enum E_KEYS
 	KEY_ESCAPE,
 	KEY_RETURN
 };
-
-constexpr int SCREEN_WIDTH = 700;
-constexpr int SCREEN_HEIGHT = 200;
 
 class Game
 {
@@ -50,6 +50,7 @@ private:
 	void Render();
 
 	void InitialiseGameOverScreen();
+	void InitialiseYouWinScreen();
 
 	// Update functions
 
@@ -64,6 +65,8 @@ private:
 
 	// Update game over screen
 	void UpdateGameOverScreen(float deltaTime);
+
+	void UpdateYouWinScreen(float deltaTime);
 
 	// Update player's state
 	void UpdatePlayer(float deltaTime);
@@ -82,12 +85,14 @@ private:
 	// Render functions
 	void RenderGame();
 	void RenderGameOverScreen();
+	void RenderYouWinScreen();
 
 	void ResetGameObjects();
 	void ResetEnemies();
 	void ResetAllProjectiles();
 	bool OnKeyPressed(int keycode);
 	void DrawExplosion(Vec2<float> &position);
+	void UpdateExplosionFrames(float deltaTime);
 	void RespawnPlayer(float respawnTime);
 
 	//Variables
@@ -115,6 +120,7 @@ private:
 	Menu pauseMenu;
 
 	Sprite splash;
+	Sprite youWin;
 	Sprite gameOver;
 	Sprite highScore;
 	Sprite pressEsc;
