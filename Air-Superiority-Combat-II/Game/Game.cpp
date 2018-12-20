@@ -62,7 +62,8 @@ Game::~Game()
 	SAFE_DELETE_PTR(m_pRenderer);
 
 	// Delete all texture data from memory
-	Texture::CleanUpAllTextures();
+	// !!!This function crashes in Release mode for some reason!!!
+	//Texture::CleanUpAllTextures();
 }
 
 void Game::Initialise()
@@ -129,6 +130,7 @@ void Game::Run()
 	float lastTime = 0.0f;
 	float newTime = gameTimer.Elapsed();
 
+	const std::string title = "Air Superiority Combat II ";
 	while (!m_bExitApp)
 	{
 		newTime = gameTimer.Elapsed();
@@ -138,6 +140,8 @@ void Game::Run()
 		Update(m_deltaTime);
 
 		Render();
+
+		m_pRenderer->SetTitle(title + std::to_string(1.0f / m_deltaTime) + " fps");
 	}
 }
 
@@ -308,6 +312,14 @@ void Game::UpdatePauseMenu()
 
 void Game::UpdateGame(float deltaTime)
 {
+	// Pause the game if user pressed esc
+	if (OnKeyPressed(VK_ESCAPE))
+	{
+		m_GameState = E_GAME_STATE_PAUSED;
+		pauseMenu.SetSelectionIndex(PAUSE_MENU_RESUME);
+		return;
+	}
+
 	if (m_bEndlessMode)
 	{
 		if (player.GetLives() <= 0)	// End game condition for endless mode
@@ -331,14 +343,6 @@ void Game::UpdateGame(float deltaTime)
 			InitialiseYouWinScreen();
 			return;
 		}
-	}
-
-	// Pause the game if user pressed esc
-	if (OnKeyPressed(VK_ESCAPE))
-	{
-		m_GameState = E_GAME_STATE_PAUSED;
-		pauseMenu.SetSelectionIndex(PAUSE_MENU_RESUME);
-		return;
 	}
 
 	UpdateExplosionFrames(deltaTime);
@@ -411,14 +415,6 @@ void Game::UpdatePlayer(float deltaTime)
 	// Move player up
 	if (GetKeyState(VK_UP) < 0)
 		player.SetPosition(player.GetPosition().x, player.GetPosition().y - player.GetSpeed() * deltaTime);
-
-	// Move player left
-	if (GetKeyState(VK_LEFT) < 0)
-		player.SetPosition(player.GetPosition().x - player.GetSpeed() * deltaTime, player.GetPosition().y);
-
-	// Move player right
-	if (GetKeyState(VK_RIGHT) < 0)
-		player.SetPosition(player.GetPosition().x + player.GetSpeed() * deltaTime, player.GetPosition().y);
 
 	if (player.ShouldFire())
 		player.Shoot(GetProjectile(playerProjectiles));

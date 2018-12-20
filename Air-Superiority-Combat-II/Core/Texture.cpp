@@ -12,11 +12,13 @@ Texture::Texture(const TGAFile &tgaFile) :
 	m_pixelData(nullptr),
 	m_size(0, 0)
 {
-	m_size.x = tgaFile.Width() * 2;
+	m_size.x = tgaFile.Width() * 2; // Double the width to ensure square proportions: console characters are half as wide as their height
 	m_size.y = tgaFile.Height();
 
 	ConvertPixels(tgaFile.Pixels(), m_pixelData, m_size);
 
+	// Every time a texture is created, the pointer to its pixel data is stored in a static vector so that
+	// all pixel data can be cleaned up at the end of the program
 	Texture::s_TextureCatalog.push_back(m_pixelData);
 }
 
@@ -29,7 +31,7 @@ Texture::Texture(CONSOLE_PIXEL* pixels, Vec2<short> size) :
 
 Texture::~Texture()
 {
-	// Need to clean up pixelData!!!
+	
 }
 
 void Texture::SetPixels(unsigned int* pixels, Vec2<short> size)
@@ -46,7 +48,8 @@ void Texture::CleanUpAllTextures()
 {
 	for (int i = 0; i < Texture::s_TextureCatalog.size(); i++)
 	{
-		SAFE_DELETE_ARY(Texture::s_TextureCatalog[i]);
+		if (Texture::s_TextureCatalog[i])
+			delete[] s_TextureCatalog[i];
 	}
 }
 
@@ -55,15 +58,15 @@ void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short
 	destination = new CONSOLE_PIXEL[size.x * size.y];
 
 	int srcWidth = size.x / 2;
-	for (int y = 0; y < size.y; y++)
+	for (int y = 0; y < size.y; y++)	// For each row of pixels in TGA file
 	{
-		for (int x = 0; x < size.x; x += 2)
+		for (int x = 0; x < size.x; x += 2)	// For each pixel in row
 		{
 			CONSOLE_PIXEL pixel = SamplePixel(source[(x >> 1) + (y * (srcWidth))]);
 
 			int dstIndex = x + (y * size.x);
 
-			destination[dstIndex] = pixel;
+			destination[dstIndex] = pixel;		// Insert two pixels next to each other to create square pixels
 			destination[dstIndex + 1] = pixel;
 		}
 	}
@@ -77,7 +80,7 @@ CONSOLE_PIXEL SamplePixel(unsigned int pixel)
 	unsigned char r = (pixel >> 16) & 0xFF;
 	unsigned char a = (pixel >> 24) & 0xFF;
 
-	// Reduce colour accuracy from 256 values to 4
+	// Reduce colour accuracy from 256 values to 8
 	r = static_cast<int>(r + 16) >> 5;
 	g = static_cast<int>(g + 16) >> 5;
 	b = static_cast<int>(b + 16) >> 5;
@@ -95,14 +98,14 @@ CONSOLE_PIXEL SamplePixel(unsigned int pixel)
 	int brightness = Max(r, Max(g, b));
 	int delta = brightness - Min(r, Min(g, b));
 
-	if (r > 1) character.char_info.Attributes |= BACKGROUND_RED;
-	if (g > 1) character.char_info.Attributes |= BACKGROUND_GREEN;
-	if (b > 1) character.char_info.Attributes |= BACKGROUND_BLUE;
+	if (r > 1) character.char_info.Attributes |= BACKGROUND_RED;	// Set red bit
+	if (g > 1) character.char_info.Attributes |= BACKGROUND_GREEN;	// Set green bit
+	if (b > 1) character.char_info.Attributes |= BACKGROUND_BLUE;	// Set blue bit
 
-	if (brightness > 6) character.char_info.Attributes |= BACKGROUND_INTENSITY;
+	if (brightness > 6) character.char_info.Attributes |= BACKGROUND_INTENSITY;	// Set intensity bit
 	
 	if (delta == 0 && brightness == 4)
-		character.char_info.Attributes = BACKGROUND_DARK_GREY;
+		character.char_info.Attributes = BACKGROUND_DARK_GREY;	// Special case for dark grey colour
 
 
 	//switch (r)

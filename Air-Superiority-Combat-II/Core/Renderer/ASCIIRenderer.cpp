@@ -42,6 +42,11 @@ void ASCIIRenderer::InitialisePixelSize()
 	SetCurrentConsoleFontEx(m_hConsole, false, &font_size);	//Set the new font size
 }
 
+void ASCIIRenderer::SetTitle(const std::string &title)
+{
+	SetConsoleTitle(title.c_str());
+}
+
 void ASCIIRenderer::TogglePixelSize()
 {
 	font_size.dwFontSize.Y == 2 ? font_size.dwFontSize.Y = 4 : font_size.dwFontSize.Y = 2;
@@ -62,8 +67,8 @@ void ASCIIRenderer::SetWindow(int Width, int Height)
 	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
 	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);
 
-	LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
-	SetConsoleTitle(windowTitle);
+	//LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
+	//SetConsoleTitle(windowTitle);
 }
 
 void ASCIIRenderer::ClearScreen(ConsoleColour colour)

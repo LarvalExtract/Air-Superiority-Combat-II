@@ -3,6 +3,7 @@
 
 #include "ConsoleColours.h"
 #include <Windows.h>
+#include <string>
 
 class ASCIIRenderer
 {
@@ -12,6 +13,8 @@ public:
 
 	void Initialise(int width, int height);
 	void InitialisePixelSize();
+
+	void SetTitle(const std::string &title);
 
 	void TogglePixelSize();
 
