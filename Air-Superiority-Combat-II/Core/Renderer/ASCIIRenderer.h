@@ -11,9 +11,8 @@ public:
 	ASCIIRenderer();
 	~ASCIIRenderer();
 
-	void Initialise(int width, int height);
-	void InitialisePixelSize();
-
+	void Initialise(int width, int height, short fontWidth, short fontHeight);
+	
 	void SetTitle(const std::string &title);
 
 	void TogglePixelSize();
@@ -21,19 +20,25 @@ public:
 	void Render();
 
 	void SetPixel(int x, int y, CHAR_INFO& pPixelData);
-	void ClearScreen(ConsoleColour colour = ConsoleColour::BACKGROUND_BLACK);	
+	void ClearScreen(ConsoleColour colour = ConsoleColour::BACKGROUND_BLACK);
+
+	short GetWidth() const { return m_ScreenSize.X; }
+	short GetHeight() const { return m_ScreenSize.Y; }
+	short GetFontWidth() const { return font.dwFontSize.X; }
+	short GetFontHeight() const { return font.dwFontSize.Y; }
 
 private:
-
-	void SetWindow(int width, int height);
-	
+	void SetPixelSize(short fontWidth, short fontHeight);
+	void SetWindow(int width, int height);	
 
 	HANDLE m_hConsole;
 	CHAR_INFO* m_ScreenData;
-	short m_Width;
-	short m_Height;
+
+	COORD m_ScreenSize;
+	SMALL_RECT m_WriteRegion;
+	CONSOLE_FONT_INFOEX font;
+
 	ConsoleColour m_BackgroundColour;
-	CONSOLE_FONT_INFOEX font_size;
 
 	bool m_bInitialised;
 };

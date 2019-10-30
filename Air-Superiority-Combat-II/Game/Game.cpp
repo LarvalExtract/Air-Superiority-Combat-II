@@ -5,10 +5,13 @@
 #include "Core/Utils.h"
 #include "Core/Renderer/ASCIIRenderer.h"
 
+constexpr int SCREEN_WIDTH = 320;
+constexpr int SCREEN_HEIGHT = 160;
+
 constexpr int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
 constexpr int HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
 
-constexpr int SCREEN_BOUNDARY_TOP = 40;
+constexpr int SCREEN_BOUNDARY_TOP = 25;
 constexpr int SCREEN_BOUNDARY_BOTTOM = SCREEN_HEIGHT - 5;
 constexpr int SCREEN_BOUNDARY_LEFT = 0;
 constexpr int SCREEN_BOUNDARY_RIGHT = 100;
@@ -31,7 +34,7 @@ enum E_MAIN_MENU_OPTIONS : unsigned char
 {
 	MAIN_MENU_START = 1,
 	MAIN_MENU_START_ENDLESS,
-	MAIN_MENU_SCREENSIZE,
+	//MAIN_MENU_SCREENSIZE,
 	MAIN_MENU_QUIT
 };
 
@@ -72,14 +75,14 @@ void Game::Initialise()
 		return;
 
 	m_pRenderer = new ASCIIRenderer();
-	m_pRenderer->Initialise(SCREEN_WIDTH, SCREEN_HEIGHT);
+	m_pRenderer->Initialise(SCREEN_WIDTH, SCREEN_HEIGHT, 4, 4);
 
 	DigitDisplay::Initialise();
 
 	mainMenu.AddMenuItem(TGAFile("ui/menu_title.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_startgame.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_startendless.tga"));
-	mainMenu.AddMenuItem(TGAFile("ui/menu_screensize.tga"));
+	//mainMenu.AddMenuItem(TGAFile("ui/menu_screensize.tga"));
 	mainMenu.AddMenuItem(TGAFile("ui/menu_quit.tga"));
 	mainMenu.SetPosition(HALF_SCREEN_WIDTH / 2, 20);
 	mainMenu.SetItemSpacing(5);
@@ -107,7 +110,7 @@ void Game::Initialise()
 		int totalWidth = width + ((MAX_PLAYER_LIVES - 1) * spacing);
 
 		int xpos = i * playerHealthIcon.m_size.x + i * spacing;
-		int ypos = 6;
+		int ypos = 2;
 
 		m_PlayerLifeIcons[i].SetTexture(playerHealthIcon);
 		m_PlayerLifeIcons[i].SetPosition(HALF_SCREEN_WIDTH - (totalWidth / 2) + xpos, ypos);
@@ -130,7 +133,10 @@ void Game::Run()
 	float lastTime = 0.0f;
 	float newTime = gameTimer.Elapsed();
 
-	const std::string title = "Air Superiority Combat II ";
+	std::string title = "Air Superiority Combat II (";
+	title += std::to_string(m_pRenderer->GetWidth()) + " x " + std::to_string(m_pRenderer->GetHeight()) + ", ";
+	title += std::to_string(m_pRenderer->GetFontWidth()) + " x " + std::to_string(m_pRenderer->GetFontHeight()) + ") ";
+
 	while (!m_bExitApp)
 	{
 		newTime = gameTimer.Elapsed();
@@ -141,7 +147,7 @@ void Game::Run()
 
 		Render();
 
-		m_pRenderer->SetTitle(title + std::to_string(1.0f / m_deltaTime) + " fps");
+		m_pRenderer->SetTitle(title + std::to_string(static_cast<int>(1.0f / m_deltaTime)) + " fps");
 	}
 }
 
@@ -159,10 +165,7 @@ void Game::InitialiseGame()
 	m_KillCount = 0;
 	
 	scoreDisplay.SetNumber(player.GetScore());
-	scoreDisplay.SetPosition(10, 5);
-
-	killCountDisplay.SetNumber(m_KillCount);
-	killCountDisplay.SetPosition(SCREEN_WIDTH - 100, 5);
+	scoreDisplay.SetPosition(5, 2);
 
 	// Reset player projectiles
 	for (Projectile& proj : playerProjectiles)
@@ -225,7 +228,7 @@ void Game::Update(float deltaTime)
 	case E_GAME_STATE_IN_GAME:		UpdateGame(deltaTime); break;
 	case E_GAME_STATE_PAUSED:		UpdatePauseMenu(); break;
 	case E_GAME_STATE_GAME_OVER:	UpdateGameOverScreen(deltaTime); break;
-	case E_GAME_STATE_YOU_WIN:		UpdateYouWinScreen(deltaTime);
+	case E_GAME_STATE_YOU_WIN:		UpdateYouWinScreen(deltaTime); break;
 	}
 }
 
@@ -266,9 +269,9 @@ void Game::UpdateMainMenu()
 			m_GameState = E_GAME_STATE_IN_GAME;
 			m_bEndlessMode = true;
 			break;
-		case MAIN_MENU_SCREENSIZE:			// Toggle screen size
-			m_pRenderer->TogglePixelSize();
-			break;
+		//case MAIN_MENU_SCREENSIZE:			// Toggle screen size
+		//	m_pRenderer->TogglePixelSize();
+		//	break;
 		case MAIN_MENU_QUIT:				// Close game
 			m_bExitApp = true;
 			break;
@@ -371,11 +374,6 @@ void Game::UpdateGame(float deltaTime)
 	if (player.GetScore() != lastScore)
 		scoreDisplay.SetNumber(player.GetScore());
 	lastScore = player.GetScore();
-
-	static int lastKillCount = 0;
-	if (m_KillCount != lastKillCount)
-		killCountDisplay.SetNumber(m_KillCount);
-	lastKillCount = m_KillCount;
 }
 
 void Game::UpdateGameOverScreen(float deltaTime)
@@ -571,7 +569,6 @@ void Game::IncreaseDifficulty()
 void Game::RenderGame()
 {
 	scoreDisplay.Render(m_pRenderer);
-	killCountDisplay.Render(m_pRenderer);
 
 	// Render player life icons
 	for (char i = 0; i < player.GetLives(); i++)

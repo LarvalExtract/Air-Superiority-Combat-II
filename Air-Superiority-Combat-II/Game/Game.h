@@ -15,9 +15,6 @@
 
 class ASCIIRenderer;
 
-constexpr int SCREEN_WIDTH = 700;
-constexpr int SCREEN_HEIGHT = 200;
-
 enum E_KEYS
 {
 	KEY_UP,
@@ -126,7 +123,6 @@ private:
 	Sprite pressEsc;
 
 	DigitDisplay scoreDisplay;
-	DigitDisplay killCountDisplay;
 	SpriteAnimation explosionSprite;
 	std::vector<Sprite> m_PlayerLifeIcons;
 

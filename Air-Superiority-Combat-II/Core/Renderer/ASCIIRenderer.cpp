@@ -3,8 +3,7 @@
 
 ASCIIRenderer::ASCIIRenderer() :
 	m_ScreenData(NULL),
-	m_Width(0),
-	m_Height(0),
+	m_ScreenSize({ 0, 0 }),
 	m_bInitialised(false),
 	m_BackgroundColour(ConsoleColour::BACKGROUND_BLACK)
 {
@@ -15,31 +14,34 @@ ASCIIRenderer::~ASCIIRenderer()
 	SAFE_DELETE_ARY(m_ScreenData);
 }
 
-void ASCIIRenderer::Initialise(int width, int height)
+void ASCIIRenderer::Initialise(int width, int height, short fontWidth, short fontHeight)
 {
 	m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	InitialisePixelSize();
-	
+	SetPixelSize(fontWidth, fontHeight);	
 	SetWindow(width, height);
 	
-	m_ScreenData = new CHAR_INFO[m_Width * m_Height];
+	m_ScreenData = new CHAR_INFO[m_ScreenSize.X * m_ScreenSize.Y];
 	
 	ClearScreen(ConsoleColour::BACKGROUND_SKYBLUE);
+
+	SetConsoleActiveScreenBuffer(m_hConsole);
 
 	m_bInitialised = true;
 }
 
-void ASCIIRenderer::InitialisePixelSize()
+void ASCIIRenderer::SetPixelSize(short fontWidth, short fontHeight)
 {
 	//---Set up font size to look like pixel---
-	font_size.cbSize = sizeof(CONSOLE_FONT_INFOEX);
-	GetCurrentConsoleFontEx(m_hConsole, false, &font_size);
+	font.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+	GetCurrentConsoleFontEx(m_hConsole, false, &font);
 
-	font_size.dwFontSize.X = 1;	//Width of element in buffer
-	font_size.dwFontSize.Y = 4;	//Hieght of element in buffer
+	wcscpy_s(font.FaceName, L"Terminal");
+	font.dwFontSize.X = fontWidth;	//Width of element in buffer
+	font.dwFontSize.Y = fontHeight;	//Hieght of element in buffer
 
-	SetCurrentConsoleFontEx(m_hConsole, false, &font_size);	//Set the new font size
+	SetCurrentConsoleFontEx(m_hConsole, false, &font);	//Set the new font size
+	GetCurrentConsoleFontEx(m_hConsole, false, &font);
 }
 
 void ASCIIRenderer::SetTitle(const std::string &title)
@@ -49,31 +51,27 @@ void ASCIIRenderer::SetTitle(const std::string &title)
 
 void ASCIIRenderer::TogglePixelSize()
 {
-	font_size.dwFontSize.Y == 2 ? font_size.dwFontSize.Y = 4 : font_size.dwFontSize.Y = 2;
+	font.dwFontSize.Y == 2 ? font.dwFontSize.Y = 4 : font.dwFontSize.Y = 4;
 
-	SetCurrentConsoleFontEx(m_hConsole, false, &font_size);
+	SetCurrentConsoleFontEx(m_hConsole, false, &font);
 }
 
 void ASCIIRenderer::SetWindow(int Width, int Height)
 {
 	COORD MaxWindowSize = GetLargestConsoleWindowSize(m_hConsole);
 
-	m_Width = min(MaxWindowSize.X, Width);
-	m_Height = min(MaxWindowSize.Y, Height);
+	m_ScreenSize.X = Width < MaxWindowSize.X ? Width : MaxWindowSize.X;
+	m_ScreenSize.Y = Height < MaxWindowSize.Y ? Height : MaxWindowSize.Y;
 	
-	SMALL_RECT rect = { 0, 0, m_Width - 1, m_Height - 1 };
-	COORD coord = { m_Width, m_Height };
+	m_WriteRegion = { 0, 0, m_ScreenSize.X - 1, m_ScreenSize.Y - 1 };
 
-	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, coord);
-	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &rect);
-
-	//LPCTSTR windowTitle = L"Air Superiority Combat II (4107COMP Assignment 1)";
-	//SetConsoleTitle(windowTitle);
+	bool bufferSizeSet = SetConsoleScreenBufferSize(m_hConsole, m_ScreenSize);
+	bool windowInfoSet = SetConsoleWindowInfo(m_hConsole, TRUE, &m_WriteRegion);
 }
 
 void ASCIIRenderer::ClearScreen(ConsoleColour colour)
 {
-	int numPixels = (m_Width * m_Height);
+	int numPixels = (m_ScreenSize.X * m_ScreenSize.Y);
 	for (int i = 0; i < numPixels; i++)
 	{
 		m_ScreenData[i].Char.UnicodeChar = 0;
@@ -84,17 +82,15 @@ void ASCIIRenderer::ClearScreen(ConsoleColour colour)
 
 void ASCIIRenderer::SetPixel(int x, int y, CHAR_INFO& pPixelData)
 {
-	if (x >= 0 && x < m_Width && y >= 0 && y < m_Height)
+	if (x >= 0 && x < m_ScreenSize.X && y >= 0 && y < m_ScreenSize.Y)
 	{
-		m_ScreenData[x + (y * m_Width)] = pPixelData;
+		m_ScreenData[x + (y * m_ScreenSize.X)] = pPixelData;
 	}
 }
 
 void ASCIIRenderer::Render()
 {
-	static COORD coord = { m_Width, m_Height };
 	static COORD coord2 = { 0, 0 };
-	static SMALL_RECT write = { 0, 0, m_Width-1, m_Height-1 };			// Region to write to
 
-	WriteConsoleOutput(m_hConsole, (const CHAR_INFO*)(m_ScreenData), coord, coord2, &write);
+	WriteConsoleOutput(m_hConsole, m_ScreenData, m_ScreenSize, coord2, &m_WriteRegion);
 }

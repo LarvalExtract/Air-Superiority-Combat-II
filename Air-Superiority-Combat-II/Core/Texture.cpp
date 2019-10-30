@@ -12,7 +12,7 @@ Texture::Texture(const TGAFile &tgaFile) :
 	m_pixelData(nullptr),
 	m_size(0, 0)
 {
-	m_size.x = tgaFile.Width() * 2; // Double the width to ensure square proportions: console characters are half as wide as their height
+	m_size.x = tgaFile.Width(); // Double the width to ensure square proportions: console characters are half as wide as their height
 	m_size.y = tgaFile.Height();
 
 	ConvertPixels(tgaFile.Pixels(), m_pixelData, m_size);
@@ -37,7 +37,6 @@ Texture::~Texture()
 void Texture::SetPixels(unsigned int* pixels, Vec2<short> size)
 {
 	m_size = size;
-	m_size.x *= 2;
 
 	ConvertPixels(pixels, m_pixelData, m_size);
 
@@ -57,17 +56,17 @@ void ConvertPixels(unsigned int* source, CONSOLE_PIXEL* &destination, Vec2<short
 {
 	destination = new CONSOLE_PIXEL[size.x * size.y];
 
-	int srcWidth = size.x / 2;
+	int srcWidth = size.x;
 	for (int y = 0; y < size.y; y++)	// For each row of pixels in TGA file
 	{
-		for (int x = 0; x < size.x; x += 2)	// For each pixel in row
+		for (int x = 0; x < size.x; x++)	// For each pixel in row
 		{
-			CONSOLE_PIXEL pixel = SamplePixel(source[(x >> 1) + (y * (srcWidth))]);
-
 			int dstIndex = x + (y * size.x);
 
+			CONSOLE_PIXEL pixel = SamplePixel(source[dstIndex]);
+
 			destination[dstIndex] = pixel;		// Insert two pixels next to each other to create square pixels
-			destination[dstIndex + 1] = pixel;
+			//destination[dstIndex + 1] = pixel;
 		}
 	}
 }
